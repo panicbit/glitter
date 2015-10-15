@@ -1,0 +1,9 @@
+[package]
+name = "glitter"
+version = "0.1.0"
+authors = ["panicbit <panicbit.dev@gmail.com>"]
+
+
+[dependencies]
+rustbox = "*"
+time = "*"
