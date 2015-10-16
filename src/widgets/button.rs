@@ -51,6 +51,10 @@ impl Button {
 
 impl Drawable for Button {
     fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+        if width == 0 || height == 0 { return }
+        let width = width - 1; // Need to substract 1 because x is already included
+        let height = height - 1; // Need to substract 1 because y is already included
+
         let width = self.label.width();
         let clicked = match self.clicked {
             true => RB_REVERSE,
