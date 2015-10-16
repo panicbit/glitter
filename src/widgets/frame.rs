@@ -6,12 +6,12 @@ use rustbox::{
 use ::traits::Drawable;
 
 pub struct Frame {
-    pub horizontal: char,
-    pub vertical: char,
-    pub top_left: char,
-    pub top_right: char,
-    pub bottom_left: char,
-    pub bottom_right: char
+    horizontal: char,
+    vertical: char,
+    top_left: char,
+    top_right: char,
+    bottom_left: char,
+    bottom_right: char
 }
 
 impl Frame {
