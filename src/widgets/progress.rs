@@ -1,9 +1,13 @@
 use rustbox::{
     RustBox,
     Color,
-    RB_NORMAL
+    RB_NORMAL,
+    Event
 };
-use ::traits::Drawable;
+use ::traits::{
+    Drawable,
+    EventReceiver,
+};
 
 pub struct Progress {
     value: i64,
@@ -75,3 +79,10 @@ impl Drawable for Progress {
         1
     }
 }
+
+impl EventReceiver for Progress {
+    fn handle_event(&mut self, event: &Event) -> bool {
+        false
+    }
+}
+

@@ -2,9 +2,13 @@ use std::cell::Cell;
 use rustbox::{
     RustBox,
     Color,
-    RB_NORMAL
+    RB_NORMAL,
+    Event
 };
-use ::traits::Drawable;
+use ::traits::{
+    Drawable,
+    EventReceiver,
+};
 
 pub struct Spinner {
     frame: Cell<u32>,
@@ -70,5 +74,11 @@ impl Drawable for Spinner {
 
     fn height(&self) -> usize {
         1
+    }
+}
+
+impl EventReceiver for Spinner {
+    fn handle_event(&mut self, event: &Event) -> bool {
+        false
     }
 }
