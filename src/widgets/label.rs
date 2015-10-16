@@ -8,6 +8,7 @@ use rustbox::{
     Mouse
 };
 use ::traits::{Drawable, EventReceiver};
+use unicode_width::UnicodeWidthStr;
 
 pub struct Label {
     text: String
@@ -32,6 +33,14 @@ impl Label {
 impl Drawable for Label {
     fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
         rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.text);
+    }
+
+    fn width(&self) -> usize {
+        UnicodeWidthStr::width(self.text())
+    }
+
+    fn height(&self) -> usize {
+        1
     }
 }
 

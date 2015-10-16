@@ -63,4 +63,12 @@ impl Drawable for Spinner {
         self.increment_frame();
         rb.print_char(x, y, RB_NORMAL, color, Color::Default, ch);
     }
+
+    fn width(&self) -> usize {
+        1
+    }
+
+    fn height(&self) -> usize {
+        1
+    }
 }

@@ -41,6 +41,20 @@ impl Drawable for VerticalLayout {
             child.draw_at(rb, x_pos, y_pos, width, 1);
         }
     }
+
+    fn width(&self) -> usize {
+        self.children
+            .iter()
+            .map(|child| child.width())
+            .max()
+            .unwrap_or(0)
+    }
+
+    fn height(&self) -> usize {
+        let children: usize = self.children.iter().map(|child| child.height()).sum();
+        let spacing = self.spacing * self.children.len();
+        children + spacing
+    }
 }
 
 impl EventReceiver for VerticalLayout {

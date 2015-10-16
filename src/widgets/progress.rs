@@ -64,4 +64,14 @@ impl Drawable for Progress {
              rb.print_char(subchar_x_pos, y_pos, RB_NORMAL, Color::Default, Color::Default, subchar);
         }
     }
+
+    fn width(&self) -> usize {
+        // TODO: Have struct contain width
+        10
+    }
+
+    fn height(&self) -> usize {
+        // TODO: Have struct contain height
+        1
+    }
 }

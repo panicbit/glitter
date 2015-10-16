@@ -7,7 +7,6 @@ use rustbox::{
     Key,
     Mouse
 };
-use unicode_width::UnicodeWidthStr;
 
 use ::traits::{Drawable, EventReceiver};
 use ::widgets::Label;
@@ -23,15 +22,12 @@ pub struct Button {
     pub top_right: char,
     pub bottom_left: char,
     pub bottom_right: char,
-    width: usize,
 }
 
 impl Button {
     pub fn new<S: Into<String>>(text: S, x: i32, y: i32) -> Button {
-        let label = Label::new(text.into());
-        let width = UnicodeWidthStr::width(label.text());
         Button {
-            label: label,
+            label: Label::new(text),
             x: x,
             y: y,
             clicked: false,
@@ -41,13 +37,11 @@ impl Button {
             top_right: '┐',
             bottom_left: '└',
             bottom_right: '┘',
-            width: width,
         }
     }
 
     pub fn set_text<S: Into<String>>(&mut self, text: S) {
         self.label.set_text(text);
-        self.width = UnicodeWidthStr::width(self.label.text());
     }
 
     pub fn toggle(&mut self) {
@@ -57,7 +51,7 @@ impl Button {
 
 impl Drawable for Button {
     fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
-        let width = self.width;
+        let width = self.label.width();
         let clicked = match self.clicked {
             true => RB_REVERSE,
             false => RB_NORMAL
@@ -82,16 +76,31 @@ impl Drawable for Button {
         print(x, y+height, self.bottom_left);
         print(x+width+1, y+height, self.bottom_right);
     }
+
+    fn width(&self) -> usize {
+        let label_width = self.label.width();
+        let border_width = 2;
+        
+        label_width + border_width
+    }
+
+    fn height(&self) -> usize {
+        let label_height = self.label.height();
+        let border_height = 2;
+        
+        label_height + border_height
+    }
 }
 
 impl EventReceiver for Button {
     fn handle_event(&mut self, event: &Event) -> bool {
         match *event {
             Event::MouseEvent(Mouse::Left, x, y) => {
-                let width = self.width as i32;
+                let width = self.width() as i32;
+                let height = self.height() as i32;
                 if x >= self.x && y >= self.y 
-                    && x <= self.x+1 + width 
-                    && y < self.y + 3i32 
+                    && x < self.x + width 
+                    && y < self.y + height
                 {
                     self.toggle();
                     true

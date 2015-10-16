@@ -61,4 +61,14 @@ impl Drawable for Frame {
 
         print(x+w+1, y+h+1, shadow);
     }
+
+    fn width(&self) -> usize {
+        // TODO: Have struct contain width
+        5
+    }
+
+    fn height(&self) -> usize {
+        // TODO: Have struct contain width
+        5
+    }
 }

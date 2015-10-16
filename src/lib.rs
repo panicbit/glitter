@@ -1,3 +1,4 @@
+#![feature(iter_arith)]
 extern crate rustbox;
 extern crate time;
 extern crate unicode_width;

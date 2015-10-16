@@ -38,6 +38,14 @@ impl Drawable for Checkbox {
         };
         rb.print_char(x_pos, y_pos, RB_NORMAL, Color::Default, Color::Default, ch);
     }
+
+    fn width(&self) -> usize {
+        1
+    }
+
+    fn height(&self) -> usize {
+        1
+    }
 }
 
 impl EventReceiver for Checkbox {
