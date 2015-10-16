@@ -29,6 +29,10 @@ fn run() {
     let rb = RustBox::init(Default::default()).unwrap();
     rb.set_input_mode(InputMode::EscMouse);
 
+    let spinner_label = Label::new("Spinning...");
+    let progress_ruler = Label::new("123456789A");
+    let mut progress_percent = Label::new("0%");
+
     let mut layout = VerticalLayout::new();
 
     let mut cbox1 = Checkbox::new(true);
@@ -51,8 +55,9 @@ fn run() {
 
         Frame::rect().draw_at(&rb, x, y, w, h);
 
-        rb.print(1, 1, RB_NORMAL, Color::Default, Color::Default, &format!("{}%", progress));
-        rb.print(1, 2, RB_NORMAL, Color::Default, Color::Default, "123456789A");
+        spinner_label.draw_at(&rb, 2, 0, 0, 1);
+        progress_percent.draw_at(&rb, 1, 1, 0, 1);
+        progress_ruler.draw_at(&rb, 1, 2, 0, 1);
 
         pbar.set_value(progress);
         pbar.draw_at(&rb, 1, 3, 10, 1);
@@ -62,8 +67,6 @@ fn run() {
         spinner.draw_at(&rb, 0, 0, 1, 1);
 
         layout.draw_at(&rb, 4, 10, 5, 5);
-
-        rb.print(2, 0, RB_NORMAL, Color::Default, Color::Default, "Spinning...");
 
         rb.present();
 
@@ -77,6 +80,8 @@ fn run() {
         if progress > 100 {
             progress = 0;
         }
+
+        progress_percent.set_text(format!("{}%", progress));
 
         //match rb.poll_event(false) {
         match rb.peek_event(Duration::milliseconds(100), false) {
