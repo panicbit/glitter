@@ -9,7 +9,7 @@ use rustbox::{
     RB_NORMAL,
     Color,
     Key,
-    Event
+    Event,
 };
 
 use rustbox::Event::MouseEvent;
@@ -30,7 +30,7 @@ fn run() {
     rb.set_input_mode(InputMode::EscMouse);
 
     let mut cbox = Checkbox::new(true);
-    let mut button = Button::new("I'm a button ガ");
+    let mut button = Button::new("I'm a button ガ", 1, 6);
     let x = 4;
     let y = 10;
     let mut w = 20;
@@ -60,10 +60,10 @@ fn run() {
 
         progress += 1;
 
-        if progress % 10 == 0 {
-            button.toggle();
-            cbox.toggle();
-        }
+        // if progress % 10 == 0 {
+        //     button.toggle();
+        //     cbox.toggle();
+        // }
 
         if progress > 100 {
             progress = 0;
@@ -72,11 +72,16 @@ fn run() {
         //match rb.poll_event(false) {
         match rb.peek_event(Duration::milliseconds(100), false) {
             Ok(Event::KeyEvent(Some(Key::Esc))) => break,
-            Ok(MouseEvent(_, xp, yp)) => {
-                w = max(0, xp - (x as i32)) as usize;
-                h = max(0, yp - (y as i32)) as usize;
-            }
             Ok(ref event) => {
+                match *event {
+                    Event::MouseEvent(_, xp, yp) => {
+                        w = max(0, xp - (x as i32)) as usize;
+                        h = max(0, yp - (y as i32)) as usize;
+                    },
+                    _ => (),
+                }
+
+                button.handle_event(event);
                 cbox.handle_event(event);
             }
             Err(e) => panic!("{}", e),
