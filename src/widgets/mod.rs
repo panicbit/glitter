@@ -12,7 +12,10 @@ mod checkbox;
 pub use self::checkbox::*;
 
 mod button;
-pub use self::button::*;
+pub use self::button::Button;
 
 mod vertical_layout;
 pub use self::vertical_layout::*;
+
+mod label;
+pub use self::label::Label;

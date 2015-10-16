@@ -10,9 +10,10 @@ use rustbox::{
 use unicode_width::UnicodeWidthStr;
 
 use ::traits::{Drawable, EventReceiver};
+use ::widgets::Label;
 
 pub struct Button {
-    pub text: String,
+    pub label: Label,
     pub x: i32,
     pub y: i32,
     pub clicked: bool,
@@ -26,9 +27,11 @@ pub struct Button {
 }
 
 impl Button {
-    pub fn new(text: &str, x: i32, y: i32) -> Button {
+    pub fn new<S: Into<String>>(text: S, x: i32, y: i32) -> Button {
+        let label = Label::new(text.into());
+        let width = UnicodeWidthStr::width(label.text());
         Button {
-            text: text.to_string(),
+            label: label,
             x: x,
             y: y,
             clicked: false,
@@ -38,8 +41,13 @@ impl Button {
             top_right: '┐',
             bottom_left: '└',
             bottom_right: '┘',
-            width: UnicodeWidthStr::width(text),
+            width: width,
         }
+    }
+
+    pub fn set_text<S: Into<String>>(&mut self, text: S) {
+        self.label.set_text(text);
+        self.width = UnicodeWidthStr::width(self.label.text());
     }
 
     pub fn toggle(&mut self) {
@@ -67,10 +75,7 @@ impl Drawable for Button {
             print(x+width+1, y, self.vertical);
         }
 
-        for (index, value) in self.text.chars().enumerate() {
-            print(x, y, self.horizontal);
-            print(x+index+1, y+1, value);
-        }
+        self.label.draw_at(rb, x + 1, y + 1, width, height);
 
         print(x, y, self.top_left);
         print(x+width+1, y, self.top_right);
