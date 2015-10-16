@@ -9,6 +9,7 @@ use rustbox::{
     RB_NORMAL,
     Color,
     Key,
+    Event
 };
 
 use rustbox::Event::MouseEvent;
@@ -70,19 +71,15 @@ fn run() {
 
         //match rb.poll_event(false) {
         match rb.peek_event(Duration::milliseconds(100), false) {
-            Ok(rustbox::Event::KeyEvent(key)) => {
-                match key {
-                    Some(Key::Esc) => { break }
-                    Some(Key::Char(' ')) => { cbox.toggle() }
-                    _ => { }
-                }
-            }
+            Ok(Event::KeyEvent(Some(Key::Esc))) => break,
             Ok(MouseEvent(_, xp, yp)) => {
                 w = max(0, xp - (x as i32)) as usize;
                 h = max(0, yp - (y as i32)) as usize;
             }
+            Ok(ref event) => {
+                cbox.handle_event(event);
+            }
             Err(e) => panic!("{}", e),
-            _ => { }
         }
     }
 

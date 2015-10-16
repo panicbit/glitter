@@ -1,9 +1,14 @@
 use rustbox::{
     RustBox,
     Color,
-    RB_NORMAL
+    RB_NORMAL,
+    Event,
+    Key
 };
-use ::traits::Drawable;
+use ::traits::{
+    Drawable,
+    EventReceiver
+};
 
 pub struct Checkbox {
     checked: bool
@@ -32,5 +37,16 @@ impl Drawable for Checkbox {
             false => '☐'
         };
         rb.print_char(x_pos, y_pos, RB_NORMAL, Color::Default, Color::Default, ch);
+    }
+}
+
+impl EventReceiver for Checkbox {
+    fn handle_event(&mut self, event: &Event) -> bool {
+        if let Event::KeyEvent(Some(Key::Char(' '))) = *event {
+            self.toggle();
+            true
+        } else {
+            false
+        }
     }
 }
