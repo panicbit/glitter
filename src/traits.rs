@@ -10,3 +10,6 @@ pub trait Drawable {
 pub trait EventReceiver {
     fn handle_event(&mut self, event: &Event) -> bool;
 }
+
+pub trait Widget: Drawable + EventReceiver {}
+impl <T: Drawable + EventReceiver> Widget for T {}
