@@ -1,4 +1,3 @@
-use std::cmp::min;
 use rustbox::{
     RustBox,
     Color,
@@ -36,33 +35,11 @@ impl VerticalLayout {
 
 impl Drawable for VerticalLayout {
     fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, width: usize, height: usize) {
-        let mut y_offset = 0;
-        for child in self.children.iter() {
-            let remaining_height = if y_offset < height {
-                height - y_offset
-            } else {
-                // no remaining vertical space left,
-                // so no need to draw remaining children
-                break
-            };
-            let slot_height = min(remaining_height, child.height());
-            child.draw_at(rb, x_pos, y_pos + y_offset, width, slot_height);
-            y_offset += child.height() + self.spacing;
+        // TODO: consider widget height
+        for (i, child) in self.children.iter().enumerate() {
+            let y_pos = y_pos + i + i * self.spacing;
+            child.draw_at(rb, x_pos, y_pos, width, 1);
         }
-    }
-
-    fn width(&self) -> usize {
-        self.children
-            .iter()
-            .map(|child| child.width())
-            .max()
-            .unwrap_or(0)
-    }
-
-    fn height(&self) -> usize {
-        let children: usize = self.children.iter().map(|child| child.height()).sum();
-        let spacing = self.spacing * self.children.len();
-        children + spacing
     }
 }
 
