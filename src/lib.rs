@@ -32,16 +32,17 @@ fn run() {
 
     let spinner_label = Label::new("Spinning...");
     let progress_ruler = Label::new("123456789A");
-    let mut progress_percent = Label::new("0%");
+    let mut progress_percent = Label::new(" 0%");
 
     let mut layout = VerticalLayout::new();
 
     let mut cbox1 = Checkbox::new(true);
     layout.add(cbox1);
+    let mut button = Button::new("I'm a button ガ", 1, 6);
+    layout.add(button);
     let mut cbox2 = Checkbox::new(true);
     layout.add(cbox2);
 
-    let mut button = Button::new("I'm a button ガ", 1, 6);
     let x = 4;
     let y = 20;
     let mut w = 20;
@@ -63,11 +64,9 @@ fn run() {
         pbar.set_value(progress);
         pbar.draw_at(&rb, 1, 3, 10, 1);
 
-        button.draw_at(&rb, 1, 6, 12, 2);
-
         spinner.draw_at(&rb, 0, 0, 1, 1);
 
-        layout.draw_at(&rb, 4, 10, 5, 5);
+        layout.draw_at(&rb, 1, 5, 5, 10);
 
         rb.present();
 
@@ -82,7 +81,7 @@ fn run() {
             progress = 0;
         }
 
-        progress_percent.set_text(format!("{}%", progress));
+        progress_percent.set_text(format!("{:>2}%", progress));
 
         //match rb.poll_event(false) {
         match rb.peek_event(Duration::milliseconds(100), false) {
@@ -96,7 +95,6 @@ fn run() {
                     _ => (),
                 }
 
-                button.handle_event(event);
                 layout.handle_event(event);
             }
             Err(e) => panic!("{}", e),
