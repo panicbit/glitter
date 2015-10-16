@@ -29,10 +29,16 @@ fn run() {
     let rb = RustBox::init(Default::default()).unwrap();
     rb.set_input_mode(InputMode::EscMouse);
 
-    let mut cbox = Checkbox::new(true);
+    let mut layout = VerticalLayout::new();
+
+    let mut cbox1 = Checkbox::new(true);
+    layout.add(cbox1);
+    let mut cbox2 = Checkbox::new(true);
+    layout.add(cbox2);
+
     let mut button = Button::new("I'm a button ガ", 1, 6);
     let x = 4;
-    let y = 10;
+    let y = 20;
     let mut w = 20;
     let mut h = 30;
     let mut progress = 0;
@@ -42,8 +48,8 @@ fn run() {
 
     loop {
         rb.clear();
+
         Frame::rect().draw_at(&rb, x, y, w, h);
-        cbox.draw_at(&rb, 5, 5, 0, 0);
 
         rb.print(1, 1, RB_NORMAL, Color::Default, Color::Default, &format!("{}%", progress));
         rb.print(1, 2, RB_NORMAL, Color::Default, Color::Default, "123456789A");
@@ -54,6 +60,9 @@ fn run() {
         button.draw_at(&rb, 1, 6, 12, 2);
 
         spinner.draw_at(&rb, 0, 0, 1, 1);
+
+        layout.draw_at(&rb, 4, 10, 5, 5);
+
         rb.print(2, 0, RB_NORMAL, Color::Default, Color::Default, "Spinning...");
 
         rb.present();
@@ -82,7 +91,7 @@ fn run() {
                 }
 
                 button.handle_event(event);
-                cbox.handle_event(event);
+                layout.handle_event(event);
             }
             Err(e) => panic!("{}", e),
         }
