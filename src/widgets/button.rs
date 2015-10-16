@@ -1,10 +1,20 @@
-use rustbox::{RustBox, Color, RB_NORMAL, RB_REVERSE};
+use rustbox::{
+    RustBox, 
+    Color, 
+    RB_NORMAL, 
+    RB_REVERSE,
+    Event,
+    Key,
+    Mouse
+};
 use unicode_width::UnicodeWidthStr;
 
-use ::traits::Drawable;
+use ::traits::{Drawable, EventReceiver};
 
 pub struct Button {
     pub text: String,
+    pub x: i32,
+    pub y: i32,
     pub clicked: bool,
     pub horizontal: char,
     pub vertical: char,
@@ -12,12 +22,15 @@ pub struct Button {
     pub top_right: char,
     pub bottom_left: char,
     pub bottom_right: char,
+    width: usize,
 }
 
 impl Button {
-    pub fn new(text: &str) -> Button {
+    pub fn new(text: &str, x: i32, y: i32) -> Button {
         Button {
             text: text.to_string(),
+            x: x,
+            y: y,
             clicked: false,
             horizontal: '─',
             vertical: '│',
@@ -25,6 +38,7 @@ impl Button {
             top_right: '┐',
             bottom_left: '└',
             bottom_right: '┘',
+            width: UnicodeWidthStr::width(text),
         }
     }
 
@@ -35,8 +49,7 @@ impl Button {
 
 impl Drawable for Button {
     fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
-        let width = UnicodeWidthStr::width_cjk(&*self.text);
-
+        let width = self.width;
         let clicked = match self.clicked {
             true => RB_REVERSE,
             false => RB_NORMAL
@@ -63,5 +76,33 @@ impl Drawable for Button {
         print(x+width+1, y, self.top_right);
         print(x, y+height, self.bottom_left);
         print(x+width+1, y+height, self.bottom_right);
+    }
+}
+
+impl EventReceiver for Button {
+    fn handle_event(&mut self, event: &Event) -> bool {
+        match *event {
+            Event::MouseEvent(Mouse::Left, x, y) => {
+                let width = self.width as i32;
+                if x >= self.x && y >= self.y 
+                    && x <= self.x+1 + width 
+                    && y < self.y + 3i32 
+                {
+                    self.toggle();
+                    true
+                } else {
+                    true
+                } //Should add height
+            }
+            Event::MouseEvent(Mouse::Release, x, y) => {
+                if self.clicked {
+                    self.toggle();
+                }
+                true
+            }
+            _ => {
+                false
+            }
+        }
     }
 }
