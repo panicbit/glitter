@@ -1,5 +1,6 @@
 extern crate rustbox;
 extern crate time;
+extern crate unicode_width;
 use time::Duration;
 use std::cmp::max;
 use rustbox::{
@@ -28,6 +29,7 @@ fn run() {
     rb.set_input_mode(InputMode::EscMouse);
 
     let mut cbox = Checkbox::new(true);
+    let mut button = Button::new("I'm a button ガ");
     let x = 4;
     let y = 10;
     let mut w = 20;
@@ -48,12 +50,20 @@ fn run() {
         pbar.set_value(progress);
         pbar.draw_at(&rb, 1, 3, 10, 1);
 
+        button.draw_at(&rb, 1, 6, 12, 2);
+
         spinner.draw_at(&rb, 0, 0, 1, 1);
         rb.print(2, 0, RB_NORMAL, Color::Default, Color::Default, "Spinning...");
 
         rb.present();
 
         progress += 1;
+
+        if progress % 10 == 0 {
+            button.toggle();
+            cbox.toggle();
+        }
+
         if progress > 100 {
             progress = 0;
         }
