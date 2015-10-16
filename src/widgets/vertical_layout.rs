@@ -35,10 +35,17 @@ impl VerticalLayout {
 
 impl Drawable for VerticalLayout {
     fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, width: usize, height: usize) {
-        // TODO: consider widget height
-        for (i, child) in self.children.iter().enumerate() {
-            let y_pos = y_pos + i + i * self.spacing;
-            child.draw_at(rb, x_pos, y_pos, width, 1);
+        let mut y_offset = 0;
+        for child in self.children.iter() {
+            let remaining_height = if y_offset < height {
+                height - y_offset
+            } else {
+                // no remaining vertical space left,
+                // so no need to draw remaining children
+                break
+            };
+            child.draw_at(rb, x_pos, y_pos + y_offset, width, 0);
+            y_offset += child.height() + self.spacing;
         }
     }
 
