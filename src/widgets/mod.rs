@@ -10,3 +10,6 @@ pub use self::frame::*;
 
 mod checkbox;
 pub use self::checkbox::*;
+
+mod button;
+pub use self::button::*;
