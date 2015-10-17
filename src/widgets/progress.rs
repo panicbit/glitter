@@ -12,7 +12,8 @@ use ::traits::{
 pub struct Progress {
     value: i64,
     min: i64,
-    max: i64
+    max: i64,
+    width: usize
 }
 
 impl Progress {
@@ -20,7 +21,8 @@ impl Progress {
         Progress {
             value: value,
             min: min,
-            max: max
+            max: max,
+            width: 10,
         }
     }
 
@@ -52,7 +54,7 @@ impl Drawable for Progress {
         let value: f64 = (self.value as f64) - (self.min as f64);
         let ratio: f64 = value / max;
 
-        let width: f64 = width as f64;
+        let width: f64 = self.width as f64;
         let to_fill = ratio * n_subchars * width;
 
         let full = (to_fill / n_subchars).floor() as usize;
@@ -63,15 +65,14 @@ impl Drawable for Progress {
             rb.print_char(x_pos + x_delta, y_pos, RB_NORMAL, Color::Default, Color::Default, '█');
         }
 
-        let subchar_x_pos = full + 1;
+        let subchar_x_pos = full;
         if subchar_x_pos <= width as usize {
-             rb.print_char(subchar_x_pos, y_pos, RB_NORMAL, Color::Default, Color::Default, subchar);
+             rb.print_char(x_pos + subchar_x_pos, y_pos, RB_NORMAL, Color::Default, Color::Default, subchar);
         }
     }
 
     fn width(&self) -> usize {
-        // TODO: Have struct contain width
-        10
+        self.width
     }
 
     fn height(&self) -> usize {
