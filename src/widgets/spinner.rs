@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use std::cell::Cell;
 use rustbox::{
     RustBox,
@@ -8,18 +9,21 @@ use rustbox::{
 use ::traits::{
     Drawable,
     EventReceiver,
+    Widget
 };
 
-pub struct Spinner {
+pub struct Spinner<M> {
+    updater: Rc<Box<Fn(&mut Spinner<M>, &M)>>,
     frame: Cell<u32>,
     rainbow: bool
 }
 
-impl Spinner {
-    pub fn new() -> Spinner {
+impl <M> Spinner<M> {
+    pub fn new<F: Fn(&mut Spinner<M>, &M) + 'static>(updater: F) -> Spinner<M> {
         Spinner {
+            updater: Rc::new(Box::new(updater)),
             frame: Cell::new(0),
-            rainbow: false
+            rainbow: false,
         }
     }
 
@@ -60,8 +64,8 @@ impl Spinner {
     }
 }
 
-impl Drawable for Spinner {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, w: usize, h: usize) {
+impl <M> Drawable<M> for Spinner<M> {
+    fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, w: usize, h: usize) {
         let ch = self.get_anim_char();
         let color = self.get_anim_color();
         self.increment_frame();
@@ -77,8 +81,14 @@ impl Drawable for Spinner {
     }
 }
 
-impl EventReceiver for Spinner {
-    fn handle_event(&mut self, event: &Event) -> bool {
+impl <M> EventReceiver<M> for Spinner<M> {
+    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
         false
+    }
+}
+
+impl <M> Widget<M> for Spinner<M> {
+    fn update(&mut self, model: &M) {
+        self.updater.clone()(self, model)
     }
 }

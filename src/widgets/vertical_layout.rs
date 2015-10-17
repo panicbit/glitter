@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use std::cmp::min;
 use rustbox::{
     RustBox,
@@ -12,20 +13,22 @@ use ::traits::{
     Widget
 };
 
-pub struct VerticalLayout {
-    children: Vec<Box<Widget>>,
-    spacing: usize
+pub struct VerticalLayout<M> {
+    updater: Rc<Box<Fn(&mut VerticalLayout<M>, &M)>>,
+    children: Vec<Box<Widget<M>>>,
+    spacing: usize,
 }
 
-impl VerticalLayout {
-    pub fn new() -> VerticalLayout {
+impl <M> VerticalLayout<M> {
+    pub fn new<F: Fn(&mut VerticalLayout<M>, &M) + 'static>(updater: F) -> VerticalLayout<M> {
         VerticalLayout {
+            updater: Rc::new(Box::new(updater)),
             children: Vec::new(),
-            spacing: 0
+            spacing: 0,
         }
     }
 
-    pub fn add<W: Widget + 'static>(&mut self, widget: W) {
+    pub fn add<W: Widget<M> + 'static>(&mut self, widget: W) {
         self.children.push(Box::new(widget))
     }
 
@@ -34,8 +37,8 @@ impl VerticalLayout {
     }
 }
 
-impl Drawable for VerticalLayout {
-    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, width: usize, height: usize) {
+impl <M> Drawable<M> for VerticalLayout<M> {
+    fn draw_at(&self, rb: &RustBox, model: &M, x_pos: usize, y_pos: usize, width: usize, height: usize) {
         let mut y_offset = 0;
         for child in self.children.iter() {
             let remaining_height = if y_offset < height {
@@ -46,7 +49,7 @@ impl Drawable for VerticalLayout {
                 break
             };
             let slot_height = min(remaining_height, child.height());
-            child.draw_at(rb, x_pos, y_pos + y_offset, width, slot_height);
+            child.draw_at(rb, model, x_pos, y_pos + y_offset, width, slot_height);
             y_offset += child.height() + self.spacing;
         }
     }
@@ -66,13 +69,22 @@ impl Drawable for VerticalLayout {
     }
 }
 
-impl EventReceiver for VerticalLayout {
-    fn handle_event(&mut self, event: &Event) -> bool {
+impl <M> EventReceiver<M> for VerticalLayout<M> {
+    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
         // TODO: implement cursor
         for child in &mut self.children {
-            child.handle_event(event);
+            child.handle_event(model, event);
         }
 
         true
+    }
+}
+
+impl <M> Widget<M> for VerticalLayout<M> {
+    fn update(&mut self, model: &M) {
+        self.updater.clone()(self, model);
+        for child in &mut self.children {
+            child.update(model)
+        }
     }
 }

@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use rustbox::{
     RustBox, 
     Color, 
@@ -7,17 +8,19 @@ use rustbox::{
     Key,
     Mouse
 };
-use ::traits::{Drawable, EventReceiver};
+use ::traits::{Drawable, EventReceiver, Widget};
 use unicode_width::UnicodeWidthStr;
 
-pub struct Label {
-    text: String
+pub struct Label<M> {
+    updater: Rc<Box<Fn(&mut Label<M>, &M)>>,
+    text: String,
 }
 
-impl Label {
-    pub fn new<S: Into<String>>(text: S) -> Label {
+impl <M> Label<M> {
+    pub fn new<F: Fn(&mut Label<M>, &M) + 'static>(updater: F) -> Label<M> {
         Label {
-            text: text.into()
+            updater: Rc::new(Box::new(updater)),
+            text: String::new(),
         }
     }
 
@@ -30,8 +33,8 @@ impl Label {
     }
 }
 
-impl Drawable for Label {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+impl <M> Drawable<M> for Label<M> {
+    fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, width: usize, height: usize) {
         rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.text);
     }
 
@@ -44,8 +47,14 @@ impl Drawable for Label {
     }
 }
 
-impl EventReceiver for Label {
-    fn handle_event(&mut self, event: &Event) -> bool {
+impl <M> EventReceiver<M> for Label<M> {
+    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
         false
+    }
+}
+
+impl <M> Widget<M> for Label<M> {
+    fn update(&mut self, model: &M) {
+        self.updater.clone()(self, model)
     }
 }

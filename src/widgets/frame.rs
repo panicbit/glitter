@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use rustbox::{
     RustBox,
     Color,
@@ -10,75 +11,79 @@ use ::traits::{
     Widget
 };
 
-pub struct Frame {
-    child: Option<Box<Widget>>,
-    horizontal: char,
-    vertical: char,
-    top_left: char,
-    top_right: char,
-    bottom_left: char,
-    bottom_right: char
+pub struct Frame<M> {
+    child: Option<Box<Widget<M>>>,
+    design: BoxDesign,
+    updater: Rc<Box<Fn(&mut Frame<M>, &M)>>
 }
 
-impl Frame {
-    pub fn rect_with<W: Widget + 'static>(child: W) -> Frame {
-        let mut frame = Frame::rect();
-        frame.add(child);
-        frame
-    }
-    pub fn rect() -> Frame {
+#[derive(Copy,Clone)]
+pub struct BoxDesign {
+    pub horizontal: char,
+    pub vertical: char,
+    pub top_left: char,
+    pub top_right: char,
+    pub bottom_left: char,
+    pub bottom_right: char
+}
+
+pub static RECTANGLE_DESIGN: BoxDesign = BoxDesign {
+    horizontal: '─',
+    vertical: '│',
+    top_left: '┌',
+    top_right: '┐',
+    bottom_left: '└',
+    bottom_right: '┘',
+};
+
+pub static ROUNDED_DESIGN: BoxDesign = BoxDesign {
+    horizontal: '─',
+    vertical: '│',
+    top_left: '╭',
+    top_right: '╮',
+    bottom_left: '╰',
+    bottom_right: '╯',
+};
+
+impl <M> Frame<M> {
+    pub fn new<F: Fn(&mut Frame<M>, &M) + 'static>(updater: F) -> Frame<M> {
         Frame {
             child: None,
-            horizontal: '─',
-            vertical: '│',
-            top_left: '┌',
-            top_right: '┐',
-            bottom_left: '└',
-            bottom_right: '┘'
+            design: RECTANGLE_DESIGN,
+            updater: Rc::new(Box::new(updater)),
         }
     }
-    pub fn rounded_with<W: Widget + 'static>(child: W) -> Frame {
-        let mut frame = Frame::rounded();
-        frame.add(child);
-        frame
+    
+    pub fn set_design<D: Into<BoxDesign>>(&mut self, design: D) {
+        self.design = design.into()
     }
-    pub fn rounded() -> Frame {
-        Frame {
-            child: None,
-            horizontal: '─',
-            vertical: '│',
-            top_left: '╭',
-            top_right: '╮',
-            bottom_left: '╰',
-            bottom_right: '╯'
-        }
-    }
-    pub fn add<W: Widget + 'static>(&mut self, child: W) {
+
+    pub fn add<W: Widget<M> + 'static>(&mut self, child: W) {
         self.child = Some(Box::new(child))
     }
 }
 
-impl Drawable for Frame {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, w: usize, h: usize) {
+impl <M> Drawable<M> for Frame<M> {
+    fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, w: usize, h: usize) {
         let print = |x, y, ch| rb.print_char(x, y, RB_NORMAL, Color::Default, Color::Default, ch);
         let shadow = '░';
 
         for x in x..(x+w) {
-            print(x, y, self.horizontal);
-            print(x, y+h, self.horizontal);
+            print(x, y, self.design.horizontal);
+            print(x, y+h, self.design.horizontal);
             print(x+1, y+h+1, shadow);
         }
 
         for y in y..(y+h) {
-            print(x, y, self.vertical);
-            print(x+w, y, self.vertical);
+            print(x, y, self.design.vertical);
+            print(x+w, y, self.design.vertical);
             print(x+w+1, y+1, shadow);
         }
 
-        print(x, y, self.top_left);
-        print(x+w, y, self.top_right);
-        print(x, y+h, self.bottom_left);
-        print(x+w, y+h, self.bottom_right);
+        print(x, y, self.design.top_left);
+        print(x+w, y, self.design.top_right);
+        print(x, y+h, self.design.bottom_left);
+        print(x+w, y+h, self.design.bottom_right);
 
         print(x+w+1, y+h+1, shadow);
 
@@ -91,7 +96,7 @@ impl Drawable for Frame {
             let w = w - border_size;
             let h = h - border_size;
 
-            child.draw_at(&rb, x + 1, y + 1, w, h);
+            child.draw_at(&rb, model, x + 1, y + 1, w, h);
         }
 
     }
@@ -107,12 +112,21 @@ impl Drawable for Frame {
     }
 }
 
-impl EventReceiver for Frame {
-    fn handle_event(&mut self, event: &Event) -> bool {
+impl <M> EventReceiver<M> for Frame<M> {
+    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
         if let Some(ref mut child) = self.child {
-            child.handle_event(event)
+            child.handle_event(model, event)
         } else {
             false
+        }
+    }
+}
+
+impl <M> Widget<M> for Frame<M> {
+    fn update(&mut self, model: &M) {
+        self.updater.clone()(self, model);
+        if let Some(ref mut child) = self.child {
+            child.update(model);
         }
     }
 }

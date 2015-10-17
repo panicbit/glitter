@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use rustbox::{
     RustBox,
     Color,
@@ -7,23 +8,34 @@ use rustbox::{
 use ::traits::{
     Drawable,
     EventReceiver,
+    Widget
 };
 
-pub struct Progress {
+pub struct Progress<M> {
+    updater: Rc<Box<Fn(&mut Progress<M>, &M)>>,
     value: i64,
     min: i64,
     max: i64,
     width: usize
 }
 
-impl Progress {
-    pub fn new(value: i64, min: i64, max: i64) -> Progress {
+impl <M> Progress<M> {
+    pub fn new<F: Fn(&mut Progress<M>, &M) + 'static>(updater: F) -> Progress<M> {
         Progress {
-            value: value,
-            min: min,
-            max: max,
+            updater: Rc::new(Box::new(updater)),
+            value: 50,
+            min: 0,
+            max: 100,
             width: 10,
         }
+    }
+
+    pub fn set_min(&mut self, min: i64) {
+        self.min = min;
+    }
+
+    pub fn set_max(&mut self, max: i64) {
+        self.max = max;
     }
 
     pub fn set_value(&mut self, value: i64) {
@@ -31,8 +43,9 @@ impl Progress {
     }
 }
 
-impl Drawable for Progress {
-    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, width: usize, height: usize) {
+impl <M> Drawable<M> for Progress<M> {
+    fn draw_at(&self, rb: &RustBox, model: &M, x_pos: usize, y_pos: usize, width: usize, height: usize) {
+        //rb.print(0, 0, RB_NORMAL, )
         fn get_sym(n: i64) -> char{
             match n {
                 0 => ' ',
@@ -81,9 +94,14 @@ impl Drawable for Progress {
     }
 }
 
-impl EventReceiver for Progress {
-    fn handle_event(&mut self, event: &Event) -> bool {
+impl <M> EventReceiver<M> for Progress<M> {
+    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
         false
     }
 }
 
+impl <M> Widget<M> for Progress<M> {
+    fn update(&mut self, model: &M) {
+        self.updater.clone()(self, model)
+    }
+}

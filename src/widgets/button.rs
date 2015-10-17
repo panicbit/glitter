@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use rustbox::{
     RustBox, 
     Color, 
@@ -8,11 +9,12 @@ use rustbox::{
     Mouse
 };
 
-use ::traits::{Drawable, EventReceiver};
+use ::traits::{Drawable, EventReceiver, Widget};
 use ::widgets::Label;
 
-pub struct Button {
-    pub label: Label,
+pub struct Button<M> {
+    updater: Rc<Box<Fn(&mut Button<M>, &M)>>,
+    pub label: Label<M>,
     pub x: i32,
     pub y: i32,
     pub clicked: bool,
@@ -24,12 +26,13 @@ pub struct Button {
     pub bottom_right: char,
 }
 
-impl Button {
-    pub fn new<S: Into<String>>(text: S, x: i32, y: i32) -> Button {
+impl <M> Button<M> {
+    pub fn new<F: Fn(&mut Button<M>, &M) + 'static>(updater: F) -> Button<M> {
         Button {
-            label: Label::new(text),
-            x: x,
-            y: y,
+            updater: Rc::new(Box::new(updater)),
+            label: Label::new(|_,_|{}),
+            x: 0,
+            y: 0,
             clicked: false,
             horizontal: '─',
             vertical: '│',
@@ -49,8 +52,8 @@ impl Button {
     }
 }
 
-impl Drawable for Button {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+impl <M> Drawable<M> for Button<M> {
+    fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, width: usize, height: usize) {
         if width == 0 || height == 0 { return }
         let width = width - 1; // Need to substract 1 because x is already included
         let height = height - 1; // Need to substract 1 because y is already included
@@ -73,7 +76,7 @@ impl Drawable for Button {
             print(x+width+1, y, self.vertical);
         }
 
-        self.label.draw_at(rb, x + 1, y + 1, width, height);
+        self.label.draw_at(rb, model, x + 1, y + 1, width, height);
 
         print(x, y, self.top_left);
         print(x+width+1, y, self.top_right);
@@ -96,8 +99,8 @@ impl Drawable for Button {
     }
 }
 
-impl EventReceiver for Button {
-    fn handle_event(&mut self, event: &Event) -> bool {
+impl <M> EventReceiver<M> for Button<M> {
+    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
         match *event {
             Event::MouseEvent(Mouse::Left, x, y) => {
                 let width = self.width() as i32;
@@ -122,5 +125,11 @@ impl EventReceiver for Button {
                 false
             }
         }
+    }
+}
+
+impl <M> Widget<M> for Button<M> {
+    fn update(&mut self, model: &M) {
+        self.updater.clone()(self, model)
     }
 }

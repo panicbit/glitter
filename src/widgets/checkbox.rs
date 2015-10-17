@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use rustbox::{
     RustBox,
     Color,
@@ -7,17 +8,20 @@ use rustbox::{
 };
 use ::traits::{
     Drawable,
-    EventReceiver
+    EventReceiver,
+    Widget
 };
 
-pub struct Checkbox {
+pub struct Checkbox<M> {
+    updater: Rc<Box<Fn(&mut Checkbox<M>, &M)>>,
     checked: bool
 }
 
-impl Checkbox {
-    pub fn new(state: bool) -> Checkbox {
+impl <M> Checkbox<M> {
+    pub fn new<F: Fn(&mut Checkbox<M>, &M) + 'static>(updater: F) -> Checkbox<M> {
         Checkbox {
-            checked: state
+            updater: Rc::new(Box::new(updater)),
+            checked: false
         }
     }
 
@@ -30,8 +34,8 @@ impl Checkbox {
     }
 }
 
-impl Drawable for Checkbox {
-    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, width: usize, height: usize) {
+impl <M> Drawable<M> for Checkbox<M> {
+    fn draw_at(&self, rb: &RustBox, model: &M, x_pos: usize, y_pos: usize, width: usize, height: usize) {
         let ch = match self.checked {
             true => '☒',
             false => '☐'
@@ -48,13 +52,19 @@ impl Drawable for Checkbox {
     }
 }
 
-impl EventReceiver for Checkbox {
-    fn handle_event(&mut self, event: &Event) -> bool {
+impl <M> EventReceiver<M> for Checkbox<M> {
+    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
         if let Event::KeyEvent(Some(Key::Char(' '))) = *event {
             self.toggle();
             true
         } else {
             false
         }
+    }
+}
+
+impl <M> Widget<M> for Checkbox<M> {
+    fn update(&mut self, model: &M) {
+        self.updater.clone()(self, model)
     }
 }
