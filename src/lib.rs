@@ -33,6 +33,10 @@ fn run() {
     let progress_ruler = Label::new("123456789A");
     let mut progress_percent = Label::new(" 0%");
 
+    // Main frame
+
+    let mut frame = Frame::rect();
+
     // ### Main layout ###
 
     let mut layout = VerticalLayout::new();
@@ -72,17 +76,13 @@ fn run() {
 
     layout.add(button_layout);
 
-    let x = 4;
-    let y = 20;
-    let mut w = 20;
-    let mut h = 30;
+    frame.add(layout);
+
     let mut progress = 0;
     let mut pbar = Progress::new(progress, 0, 100);
 
     loop {
         rb.clear();
-
-        Frame::rect().draw_at(&rb, x, y, w, h);
 
         progress_percent.draw_at(&rb, 1, 1, 0, 1);
         progress_ruler.draw_at(&rb, 1, 2, 0, 1);
@@ -90,7 +90,7 @@ fn run() {
         pbar.set_value(progress);
         pbar.draw_at(&rb, 1, 3, 10, 1);
 
-        layout.draw_at(&rb, 1, 5, 50, 10);
+        frame.draw_at(&rb, 1, 5, 40, 10);
 
         rb.present();
 
@@ -111,15 +111,7 @@ fn run() {
         match rb.peek_event(Duration::milliseconds(100), false) {
             Ok(Event::KeyEvent(Some(Key::Esc))) => break,
             Ok(ref event) => {
-                match *event {
-                    Event::MouseEvent(_, xp, yp) => {
-                        w = max(0, xp - (x as i32)) as usize;
-                        h = max(0, yp - (y as i32)) as usize;
-                    },
-                    _ => (),
-                }
-
-                layout.handle_event(event);
+                frame.handle_event(event);
             }
             Err(e) => panic!("{}", e),
         }
