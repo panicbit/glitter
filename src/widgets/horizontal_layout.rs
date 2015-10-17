@@ -1,3 +1,4 @@
+use std::cmp::min;
 use rustbox::{
     RustBox,
     Color,
@@ -11,14 +12,14 @@ use ::traits::{
     Widget
 };
 
-pub struct VerticalLayout {
+pub struct HorizontalLayout {
     children: Vec<Box<Widget>>,
     spacing: usize
 }
 
-impl VerticalLayout {
-    pub fn new() -> VerticalLayout {
-        VerticalLayout {
+impl HorizontalLayout {
+    pub fn new() -> HorizontalLayout {
+        HorizontalLayout {
             children: Vec::new(),
             spacing: 0
         }
@@ -33,17 +34,39 @@ impl VerticalLayout {
     }
 }
 
-impl Drawable for VerticalLayout {
+impl Drawable for HorizontalLayout {
     fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, width: usize, height: usize) {
-        // TODO: consider widget height
-        for (i, child) in self.children.iter().enumerate() {
-            let y_pos = y_pos + i + i * self.spacing;
-            child.draw_at(rb, x_pos, y_pos, width, 1);
+        let mut x_offset = 0;
+        for child in self.children.iter() {
+            let remaining_width = if x_offset < width {
+                width - x_offset
+            } else {
+                // no remaining horizontal space left,
+                // so no need to draw remaining children
+                break
+            };
+            let slot_width = min(remaining_width, child.width());
+            child.draw_at(rb, x_pos + x_offset, y_pos, slot_width, height);
+            x_offset += child.width() + self.spacing;
         }
+    }
+
+    fn width(&self) -> usize {
+        let children: usize = self.children.iter().map(|child| child.width()).sum();
+        let spacing = self.spacing * self.children.len();
+        children + spacing
+    }
+
+    fn height(&self) -> usize {
+        self.children
+            .iter()
+            .map(|child| child.height())
+            .max()
+            .unwrap_or(0)
     }
 }
 
-impl EventReceiver for VerticalLayout {
+impl EventReceiver for HorizontalLayout {
     fn handle_event(&mut self, event: &Event) -> bool {
         // TODO: implement cursor
         for child in &mut self.children {
