@@ -30,18 +30,47 @@ fn run() {
     let rb = RustBox::init(Default::default()).unwrap();
     rb.set_input_mode(InputMode::EscMouse);
 
-    let spinner_label = Label::new("Spinning...");
     let progress_ruler = Label::new("123456789A");
     let mut progress_percent = Label::new(" 0%");
 
+    // ### Main layout ###
+
     let mut layout = VerticalLayout::new();
 
-    let mut cbox1 = Checkbox::new(true);
-    layout.add(cbox1);
-    let mut button = Button::new("I'm a button ガ", 1, 6);
-    layout.add(button);
-    let mut cbox2 = Checkbox::new(true);
-    layout.add(cbox2);
+    // ### Spinner ###
+
+    let mut spinner = Spinner::new();
+    let spinner_label = Label::new("Spinning...");
+
+    spinner.rainbow(true);
+
+    let mut spinner_layout = HorizontalLayout::new();
+    spinner_layout.add(spinner);
+    spinner_layout.add(spinner_label);
+
+    layout.add(spinner_layout);
+
+    // ### Checkbox ###
+
+    let checkbox = Checkbox::new(true);
+    let checkbox_label = Label::new("I'm a checkbox!");
+
+    let mut checkbox_layout = HorizontalLayout::new();
+    checkbox_layout.add(checkbox);
+    checkbox_layout.add(checkbox_label);
+
+    layout.add(checkbox_layout);
+
+    // ### Buttons ###
+
+    let mut button1 = Button::new("I'm a button ガ", 1, 6);
+    let mut button2 = Button::new("I'm another button", 1, 6);
+
+    let mut button_layout = HorizontalLayout::new();
+    button_layout.add(button1);
+    button_layout.add(button2);
+
+    layout.add(button_layout);
 
     let x = 4;
     let y = 20;
@@ -49,24 +78,19 @@ fn run() {
     let mut h = 30;
     let mut progress = 0;
     let mut pbar = Progress::new(progress, 0, 100);
-    let mut spinner = Spinner::new();
-    spinner.rainbow(true);
 
     loop {
         rb.clear();
 
         Frame::rect().draw_at(&rb, x, y, w, h);
 
-        spinner_label.draw_at(&rb, 2, 0, 0, 1);
         progress_percent.draw_at(&rb, 1, 1, 0, 1);
         progress_ruler.draw_at(&rb, 1, 2, 0, 1);
 
         pbar.set_value(progress);
         pbar.draw_at(&rb, 1, 3, 10, 1);
 
-        spinner.draw_at(&rb, 0, 0, 1, 1);
-
-        layout.draw_at(&rb, 1, 5, 5, 10);
+        layout.draw_at(&rb, 1, 5, 50, 10);
 
         rb.present();
 
