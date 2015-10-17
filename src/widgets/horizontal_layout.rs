@@ -21,7 +21,7 @@ impl HorizontalLayout {
     pub fn new() -> HorizontalLayout {
         HorizontalLayout {
             children: Vec::new(),
-            spacing: 0
+            spacing: 1
         }
     }
 
