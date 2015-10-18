@@ -2,10 +2,7 @@ use std::rc::Rc;
 use std::cmp::min;
 use rustbox::{
     RustBox,
-    Color,
-    RB_NORMAL,
     Event,
-    Key
 };
 use ::traits::{
     Drawable,

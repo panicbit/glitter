@@ -3,20 +3,14 @@ extern crate rustbox;
 extern crate time;
 extern crate unicode_width;
 use time::Duration;
-use std::cmp::max;
 use rustbox::{
     RustBox,
     InputMode,
-    RB_NORMAL,
-    Color,
     Key,
     Event,
 };
 
-use rustbox::Event::MouseEvent;
-
 pub mod widgets;
-use widgets::*;
 pub mod traits;
 use traits::*;
 

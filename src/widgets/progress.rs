@@ -44,7 +44,7 @@ impl <M> Progress<M> {
 }
 
 impl <M> Drawable<M> for Progress<M> {
-    fn draw_at(&self, rb: &RustBox, model: &M, x_pos: usize, y_pos: usize, width: usize, height: usize) {
+    fn draw_at(&self, rb: &RustBox, _model: &M, x_pos: usize, y_pos: usize, available_width: usize, available_height: usize) {
         //rb.print(0, 0, RB_NORMAL, )
         fn get_sym(n: i64) -> char{
             match n {
@@ -95,7 +95,7 @@ impl <M> Drawable<M> for Progress<M> {
 }
 
 impl <M> EventReceiver<M> for Progress<M> {
-    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
+    fn handle_event(&mut self, _model: &mut M, _event: &Event) -> bool {
         false
     }
 }

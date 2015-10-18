@@ -65,7 +65,7 @@ impl <M> Spinner<M> {
 }
 
 impl <M> Drawable<M> for Spinner<M> {
-    fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, w: usize, h: usize) {
+    fn draw_at(&self, rb: &RustBox, _model: &M, x: usize, y: usize, available_width: usize, available_height: usize) {
         let ch = self.get_anim_char();
         let color = self.get_anim_color();
         self.increment_frame();
@@ -82,7 +82,7 @@ impl <M> Drawable<M> for Spinner<M> {
 }
 
 impl <M> EventReceiver<M> for Spinner<M> {
-    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
+    fn handle_event(&mut self, _model: &mut M, _event: &Event) -> bool {
         false
     }
 }

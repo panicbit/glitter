@@ -3,10 +3,7 @@ use rustbox::{
     RustBox, 
     Color, 
     RB_NORMAL, 
-    RB_REVERSE,
     Event,
-    Key,
-    Mouse
 };
 use ::traits::{Drawable, EventReceiver, Widget};
 use unicode_width::UnicodeWidthStr;
@@ -34,7 +31,7 @@ impl <M> Label<M> {
 }
 
 impl <M> Drawable<M> for Label<M> {
-    fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, width: usize, height: usize) {
+    fn draw_at(&self, rb: &RustBox, _model: &M, x: usize, y: usize, available_width: usize, available_height: usize) {
         rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.text);
     }
 
@@ -48,7 +45,7 @@ impl <M> Drawable<M> for Label<M> {
 }
 
 impl <M> EventReceiver<M> for Label<M> {
-    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
+    fn handle_event(&mut self, _model: &mut M, _event: &Event) -> bool {
         false
     }
 }

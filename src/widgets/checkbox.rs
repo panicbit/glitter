@@ -38,7 +38,7 @@ impl <M> Checkbox<M> {
 }
 
 impl <M> Drawable<M> for Checkbox<M> {
-    fn draw_at(&self, rb: &RustBox, model: &M, x_pos: usize, y_pos: usize, width: usize, height: usize) {
+    fn draw_at(&self, rb: &RustBox, _model: &M, x_pos: usize, y_pos: usize, available_width: usize, available_height: usize) {
         let ch = match self.checked {
             true => '☒',
             false => '☐'

@@ -5,7 +5,6 @@ use rustbox::{
     RB_NORMAL, 
     RB_REVERSE,
     Event,
-    Key,
     Mouse
 };
 
@@ -57,8 +56,7 @@ impl <M> Button<M> {
 impl <M> Drawable<M> for Button<M> {
     fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, width: usize, height: usize) {
         if width == 0 || height == 0 { return }
-        let width = width - 1; // Need to substract 1 because x is already included
-        let height = height - 1; // Need to substract 1 because y is already included
+        let height = height - 1; // Because drawing at `height + width` is off by one
 
         let width = self.label.width();
         let clicked = match self.clicked {
@@ -102,7 +100,7 @@ impl <M> Drawable<M> for Button<M> {
 }
 
 impl <M> EventReceiver<M> for Button<M> {
-    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
+    fn handle_event(&mut self, _model: &mut M, event: &Event) -> bool {
         match *event {
             Event::MouseEvent(Mouse::Left, x, y) => {
                 let width = self.width() as i32;
@@ -117,7 +115,7 @@ impl <M> EventReceiver<M> for Button<M> {
                     true
                 } //Should add height
             }
-            Event::MouseEvent(Mouse::Release, x, y) => {
+            Event::MouseEvent(Mouse::Release, _x, _y) => {
                 if self.clicked {
                     self.toggle();
                 }
