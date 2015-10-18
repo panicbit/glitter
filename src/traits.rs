@@ -17,10 +17,8 @@ pub trait Widget<M>: Drawable<M> + EventReceiver<M> {
     fn update(&mut self, model: &M);
 }
 
-/*s
-pub trait ActionSender {
+pub trait ActionSender<M> {
     type Action;
-    fn add_action_handler<H: FnMut() + 'static>(&mut self, handler: H);
-    fn emit_action(&mut self, action: Self::Action);
+    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H);
+    fn do_action(&mut self, model: &mut M, action: Self::Action);
 }
-*/

@@ -9,11 +9,12 @@ use rustbox::{
     Mouse
 };
 
-use ::traits::{Drawable, EventReceiver, Widget};
+use ::traits::{Drawable, EventReceiver, Widget, ActionSender};
 use ::widgets::Label;
 
 pub struct Button<M> {
     updater: Rc<Box<Fn(&mut Button<M>, &M)>>,
+    action_handler: Option<Box<Fn(&mut M, ())>>,
     pub label: Label<M>,
     pub x: i32,
     pub y: i32,
@@ -30,6 +31,7 @@ impl <M> Button<M> {
     pub fn new<F: Fn(&mut Button<M>, &M) + 'static>(updater: F) -> Button<M> {
         Button {
             updater: Rc::new(Box::new(updater)),
+            action_handler: None,
             label: Label::new(|_,_|{}),
             x: 0,
             y: 0,
@@ -131,5 +133,17 @@ impl <M> EventReceiver<M> for Button<M> {
 impl <M> Widget<M> for Button<M> {
     fn update(&mut self, model: &M) {
         self.updater.clone()(self, model)
+    }
+}
+
+impl <M> ActionSender<M> for Button<M> {
+    type Action = ();
+    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
+        self.action_handler = Some(Box::new(handler))
+    }
+    fn do_action(&mut self, model: &mut M, action: Self::Action) {
+        if let Some(ref handler) = self.action_handler {
+            handler(model, action)
+        }
     }
 }

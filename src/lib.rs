@@ -42,7 +42,6 @@ fn run() {
         is_progressing: true
     };
 
-
     // Main frame
 
     let mut frame = Frame::new(|_, _| {});
@@ -89,8 +88,12 @@ fn run() {
 
     // ### Checkbox ###
 
-    let checkbox = Checkbox::new(|this: &mut Checkbox<_>, model: &Model| {
-        this.set_checked(model.is_progressing);
+    let mut checkbox = Checkbox::new(|this: &mut Checkbox<_>, model: &Model| {
+        this.set_checked(!model.is_progressing);
+    });
+
+    checkbox.set_action_handler(|model, _| {
+        model.is_progressing = !model.is_progressing
     });
 
     let checkbox_label = Label::new(|this: &mut Label<_>, model: &Model| {
@@ -139,7 +142,6 @@ fn run() {
         //match rb.poll_event(false) {
         match rb.peek_event(Duration::milliseconds(100), false) {
             Ok(Event::KeyEvent(Some(Key::Esc))) => break,
-            Ok(Event::KeyEvent(Some(Key::Char(' ')))) => model.is_progressing = !model.is_progressing,
             Ok(ref event) => {
                 frame.handle_event(&mut model, event);
             }
