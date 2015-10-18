@@ -141,7 +141,7 @@ fn run() {
             Ok(Event::KeyEvent(Some(Key::Esc))) => break,
             Ok(Event::KeyEvent(Some(Key::Char(' ')))) => model.is_progressing = !model.is_progressing,
             Ok(ref event) => {
-                frame.handle_event(&model, event);
+                frame.handle_event(&mut model, event);
             }
             Err(e) => panic!("{}", e),
         }

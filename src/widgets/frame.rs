@@ -113,7 +113,7 @@ impl <M> Drawable<M> for Frame<M> {
 }
 
 impl <M> EventReceiver<M> for Frame<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         if let Some(ref mut child) = self.child {
             child.handle_event(model, event)
         } else {

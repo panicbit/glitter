@@ -100,7 +100,7 @@ impl <M> Drawable<M> for Button<M> {
 }
 
 impl <M> EventReceiver<M> for Button<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         match *event {
             Event::MouseEvent(Mouse::Left, x, y) => {
                 let width = self.width() as i32;

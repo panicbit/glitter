@@ -82,7 +82,7 @@ impl <M> Drawable<M> for Spinner<M> {
 }
 
 impl <M> EventReceiver<M> for Spinner<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         false
     }
 }

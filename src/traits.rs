@@ -10,7 +10,7 @@ pub trait Drawable<M> {
 }
 
 pub trait EventReceiver<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool;
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool;
 }
 
 pub trait Widget<M>: Drawable<M> + EventReceiver<M> {

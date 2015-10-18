@@ -95,7 +95,7 @@ impl <M> Drawable<M> for Progress<M> {
 }
 
 impl <M> EventReceiver<M> for Progress<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         false
     }
 }

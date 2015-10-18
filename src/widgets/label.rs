@@ -48,7 +48,7 @@ impl <M> Drawable<M> for Label<M> {
 }
 
 impl <M> EventReceiver<M> for Label<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         false
     }
 }

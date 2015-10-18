@@ -53,7 +53,7 @@ impl <M> Drawable<M> for Checkbox<M> {
 }
 
 impl <M> EventReceiver<M> for Checkbox<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         if let Event::KeyEvent(Some(Key::Char(' '))) = *event {
             self.toggle();
             true

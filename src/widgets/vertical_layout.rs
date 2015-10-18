@@ -70,7 +70,7 @@ impl <M> Drawable<M> for VerticalLayout<M> {
 }
 
 impl <M> EventReceiver<M> for VerticalLayout<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         // TODO: implement cursor
         for child in &mut self.children {
             child.handle_event(model, event);

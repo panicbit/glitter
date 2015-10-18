@@ -70,7 +70,7 @@ impl <M> Drawable<M> for HorizontalLayout<M> {
 }
 
 impl <M> EventReceiver<M> for HorizontalLayout<M> {
-    fn handle_event(&mut self, model: &M, event: &Event) -> bool {
+    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         // TODO: implement cursor
         for child in &mut self.children {
             child.handle_event(model, event);
