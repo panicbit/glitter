@@ -4,6 +4,8 @@ extern crate time;
 extern crate unicode_width;
 use time::Duration;
 use std::cmp::max;
+use std::thread;
+use std::sync::{Arc,RwLock};
 use rustbox::{
     RustBox,
     InputMode,
@@ -32,15 +34,33 @@ fn run() {
     rb.set_input_mode(InputMode::EscMouse);
 
     // The application model
-    struct Model {
+    struct AppModel {
         progress: i64,
         is_progressing: bool
     }
+    type Model = Arc<RwLock<AppModel>>;
 
-    let mut model = Model {
+    let mut model = Arc::new(RwLock::new(AppModel {
         progress: 0,
         is_progressing: true
-    };
+    }));
+
+    // Spawn background thread
+    {
+        let model = model.clone();
+        thread::spawn(move || {
+            loop {
+                thread::sleep_ms(100);
+                let mut model = model.write().unwrap();
+                if model.is_progressing {
+                    model.progress += 1;
+                    if model.progress > 100 {
+                        model.progress = 0;
+                    }
+                }
+            }
+        });
+    }
 
     // Main frame
 
@@ -72,12 +92,14 @@ fn run() {
     let mut progress_layout = HorizontalLayout::new(|_, _| {});
 
     let mut progress_bar = Progress::new(|this: &mut Progress<_>, model: &Model| {
+        let model = model.read().unwrap();
         this.set_min(0);
         this.set_max(100);
         this.set_value(model.progress);
     });
 
     let mut progress_percent = Label::new(|this: &mut Label<_>, model: &Model| {
+        let model = model.read().unwrap();
         this.set_text(format!("{:>3}%", model.progress));
     });
 
@@ -89,10 +111,12 @@ fn run() {
     // ### Checkbox ###
 
     let mut checkbox = Checkbox::new(|this: &mut Checkbox<_>, model: &Model| {
+        let model = model.read().unwrap();
         this.set_checked(!model.is_progressing);
     });
 
     checkbox.set_action_handler(|model, _| {
+        let mut model = model.write().unwrap();
         model.is_progressing = !model.is_progressing
     });
 
@@ -130,14 +154,6 @@ fn run() {
         frame.draw_at(&rb, &model, 1, 1, 45, 20);
 
         rb.present();
-
-        if model.is_progressing {
-            model.progress += 1;
-
-            if model.progress > 100 {
-                model.progress = 0;
-            }
-        }
 
         //match rb.poll_event(false) {
         match rb.peek_event(Duration::milliseconds(100), false) {
