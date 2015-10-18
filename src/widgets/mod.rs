@@ -1,24 +1,24 @@
 
-mod spinner;
+pub mod spinner;
 pub use self::spinner::*;
 
-mod progress;
+pub mod progress;
 pub use self::progress::*;
 
-mod frame;
+pub mod frame;
 pub use self::frame::*;
 
-mod checkbox;
+pub mod checkbox;
 pub use self::checkbox::*;
 
-mod button;
+pub mod button;
 pub use self::button::Button;
 
-mod vertical_layout;
+pub mod vertical_layout;
 pub use self::vertical_layout::*;
 
-mod horizontal_layout;
+pub mod horizontal_layout;
 pub use self::horizontal_layout::*;
 
-mod label;
+pub mod label;
 pub use self::label::Label;
