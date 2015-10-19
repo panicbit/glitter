@@ -12,20 +12,23 @@ use ::traits::{
     Widget,
     ActionSender
 };
+use ::widgets::Base;
 
 pub struct Checkbox<M> {
-    updater: Rc<Box<Fn(&mut Checkbox<M>, &M)>>,
-    action_handler: Option<Box<Fn(&mut M, ())>>,
+    base: Rc<Base<Checkbox<M>, M>>,
     checked: bool
 }
 
 impl <M> Checkbox<M> {
-    pub fn new<F: Fn(&mut Checkbox<M>, &M) + 'static>(updater: F) -> Checkbox<M> {
+    pub fn new() -> Checkbox<M> {
         Checkbox {
-            updater: Rc::new(Box::new(updater)),
-            action_handler: None,
+            base: Base::new(),
             checked: false
         }
+    }
+
+    pub fn set_update_handler<F: Fn(&mut Checkbox<M>, &M) + 'static>(&mut self, updater: F) {
+        self.base.set_update_handler(updater)
     }
 
     pub fn set_checked(&mut self, state: bool) {
@@ -68,18 +71,16 @@ impl <M> EventReceiver<M> for Checkbox<M> {
 
 impl <M> Widget<M> for Checkbox<M> {
     fn update(&mut self, model: &M) {
-        self.updater.clone()(self, model)
+        self.base.clone().update(self, model);
     }
 }
 
 impl <M> ActionSender<M> for Checkbox<M> {
     type Action = ();
     fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
-        self.action_handler = Some(Box::new(handler))
+        self.base.set_action_handler(handler)
     }
     fn do_action(&mut self, model: &mut M, action: Self::Action) {
-        if let Some(ref handler) = self.action_handler {
-            handler(model, action)
-        }
+        self.base.do_action(model, action)
     }
 }

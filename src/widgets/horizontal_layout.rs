@@ -7,22 +7,28 @@ use rustbox::{
 use ::traits::{
     Drawable,
     EventReceiver,
-    Widget
+    Widget,
+    ActionSender
 };
+use ::widgets::Base;
 
 pub struct HorizontalLayout<M> {
-    updater: Rc<Box<Fn(&mut HorizontalLayout<M>, &M)>>,
+    base: Rc<Base<HorizontalLayout<M>, M>>,
     children: Vec<Box<Widget<M>>>,
     spacing: usize,
 }
 
 impl <M> HorizontalLayout<M> {
-    pub fn new<F: Fn(&mut HorizontalLayout<M>, &M) + 'static>(updater: F) -> HorizontalLayout<M> {
+    pub fn new() -> HorizontalLayout<M> {
         HorizontalLayout {
-            updater: Rc::new(Box::new(updater)),
+            base: Base::new(),
             children: Vec::new(),
             spacing: 1,
         }
+    }
+
+    pub fn set_update_handler<F: Fn(&mut HorizontalLayout<M>, &M) + 'static>(&mut self, updater: F) {
+        self.base.set_update_handler(updater)
     }
 
     pub fn add<W: Widget<M> + 'static>(&mut self, widget: W) {
@@ -79,9 +85,20 @@ impl <M> EventReceiver<M> for HorizontalLayout<M> {
 
 impl <M> Widget<M> for HorizontalLayout<M> {
     fn update(&mut self, model: &M) {
-        self.updater.clone()(self, model);
+        self.base.clone().update(self, model);
         for child in &mut self.children {
             child.update(model)
         }
+
+    }
+}
+
+impl <M> ActionSender<M> for HorizontalLayout<M> {
+    type Action = ();
+    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+    fn do_action(&mut self, model: &mut M, action: Self::Action) {
+        self.base.do_action(model, action)
     }
 }

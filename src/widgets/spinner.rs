@@ -9,22 +9,28 @@ use rustbox::{
 use ::traits::{
     Drawable,
     EventReceiver,
-    Widget
+    Widget,
+    ActionSender
 };
+use ::widgets::Base;
 
 pub struct Spinner<M> {
-    updater: Rc<Box<Fn(&mut Spinner<M>, &M)>>,
+    base: Rc<Base<Spinner<M>, M>>,
     frame: Cell<u32>,
     rainbow: bool
 }
 
 impl <M> Spinner<M> {
-    pub fn new<F: Fn(&mut Spinner<M>, &M) + 'static>(updater: F) -> Spinner<M> {
+    pub fn new() -> Spinner<M> {
         Spinner {
-            updater: Rc::new(Box::new(updater)),
+            base: Base::new(),
             frame: Cell::new(0),
             rainbow: false,
         }
+    }
+
+    pub fn set_update_handler<F: Fn(&mut Spinner<M>, &M) + 'static>(&mut self, updater: F) {
+        self.base.set_update_handler(updater)
     }
 
     fn get_anim_char(&self) -> char {
@@ -89,6 +95,16 @@ impl <M> EventReceiver<M> for Spinner<M> {
 
 impl <M> Widget<M> for Spinner<M> {
     fn update(&mut self, model: &M) {
-        self.updater.clone()(self, model)
+        self.base.clone().update(self, model);
+    }
+}
+
+impl <M> ActionSender<M> for Spinner<M> {
+    type Action = ();
+    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+    fn do_action(&mut self, model: &mut M, action: Self::Action) {
+        self.base.do_action(model, action)
     }
 }

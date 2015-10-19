@@ -5,20 +5,25 @@ use rustbox::{
     RB_NORMAL, 
     Event,
 };
-use ::traits::{Drawable, EventReceiver, Widget};
+use ::traits::{Drawable, EventReceiver, Widget, ActionSender};
 use unicode_width::UnicodeWidthStr;
+use ::widgets::Base;
 
 pub struct Label<M> {
-    updater: Rc<Box<Fn(&mut Label<M>, &M)>>,
+    base: Rc<Base<Label<M>, M>>,
     text: String,
 }
 
 impl <M> Label<M> {
-    pub fn new<F: Fn(&mut Label<M>, &M) + 'static>(updater: F) -> Label<M> {
+    pub fn new() -> Label<M> {
         Label {
-            updater: Rc::new(Box::new(updater)),
+            base: Base::new(),
             text: String::new(),
         }
+    }
+
+    pub fn set_update_handler<F: Fn(&mut Label<M>, &M) + 'static>(&mut self, updater: F) {
+        self.base.set_update_handler(updater)
     }
 
     pub fn set_text<S: Into<String>>(&mut self, text: S) {
@@ -52,6 +57,16 @@ impl <M> EventReceiver<M> for Label<M> {
 
 impl <M> Widget<M> for Label<M> {
     fn update(&mut self, model: &M) {
-        self.updater.clone()(self, model)
+        self.base.clone().update(self, model);
+    }
+}
+
+impl <M> ActionSender<M> for Label<M> {
+    type Action = ();
+    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+    fn do_action(&mut self, model: &mut M, action: Self::Action) {
+        self.base.do_action(model, action)
     }
 }

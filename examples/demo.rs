@@ -12,7 +12,7 @@ fn main() {
     }
     type Model = Arc<RwLock<AppModel>>;
 
-    let mut model = Arc::new(RwLock::new(AppModel {
+    let model = Arc::new(RwLock::new(AppModel {
         progress: 0,
         is_progressing: true
     }));
@@ -36,24 +36,22 @@ fn main() {
 
     // Main frame
 
-    let mut frame = Frame::new(|_, _| {});
+    let mut frame = Frame::new();
 
     // ### Main layout ###
 
-    let mut layout = VerticalLayout::new(|_, _| {});
+    let mut layout = VerticalLayout::new();
     layout.set_spacing(1);
 
     // ### Spinner ###
 
-    let mut spinner = Spinner::new(|this: &mut Spinner<_>, model: &Model| {
-        this.rainbow(true);
-    });
+    let mut spinner = Spinner::new();
+    spinner.rainbow(true);
 
-    let spinner_label = Label::new(|this: &mut Label<_>, model: &Model| {
-        this.set_text("Spinning...");
-    });
+    let mut spinner_label = Label::new();
+    spinner_label.set_text("Spinning...");
 
-    let mut spinner_layout = HorizontalLayout::new(|_, _| {});
+    let mut spinner_layout = HorizontalLayout::new();
     spinner_layout.add(spinner);
     spinner_layout.add(spinner_label);
 
@@ -61,16 +59,18 @@ fn main() {
 
     // ### Progress bar ###
 
-    let mut progress_layout = HorizontalLayout::new(|_, _| {});
+    let mut progress_layout = HorizontalLayout::new();
 
-    let mut progress_bar = Progress::new(|this: &mut Progress<_>, model: &Model| {
+    let mut progress_bar: Progress<Model> = Progress::new();
+    progress_bar.set_update_handler(|this, model| {
         let model = model.read().unwrap();
         this.set_min(0);
         this.set_max(100);
         this.set_value(model.progress);
     });
 
-    let mut progress_percent = Label::new(|this: &mut Label<_>, model: &Model| {
+    let mut progress_percent: Label<Model> = Label::new();
+    progress_percent.set_update_handler(|this, model| {
         let model = model.read().unwrap();
         this.set_text(format!("{:>3}%", model.progress));
     });
@@ -82,7 +82,8 @@ fn main() {
 
     // ### Checkbox ###
 
-    let mut checkbox = Checkbox::new(|this: &mut Checkbox<_>, model: &Model| {
+    let mut checkbox: Checkbox<Model> = Checkbox::new();
+    checkbox.set_update_handler(|this, model| {
         let model = model.read().unwrap();
         this.set_checked(!model.is_progressing);
     });
@@ -92,11 +93,10 @@ fn main() {
         model.is_progressing = !model.is_progressing
     });
 
-    let checkbox_label = Label::new(|this: &mut Label<_>, model: &Model| {
-        this.set_text("Paused")
-    });
+    let mut checkbox_label = Label::new();
+    checkbox_label.set_text("Paused");
 
-    let mut checkbox_layout = HorizontalLayout::new(|_, _| {});
+    let mut checkbox_layout = HorizontalLayout::new();
     checkbox_layout.add(checkbox);
     checkbox_layout.add(checkbox_label);
 
@@ -104,14 +104,13 @@ fn main() {
 
     // ### Buttons ###
 
-    let mut button1 = Button::new(|this: &mut Button<_>, model: &Model| {
-        this.set_text("I'm a button ガ")
-    });
-    let mut button2 = Button::new(|this: &mut Button<_>, model: &Model| {
-        this.set_text("I'm another button")
-    });
+    let mut button1 = Button::new();
+    button1.set_text("I'm a button ガ");
 
-    let mut button_layout = HorizontalLayout::new(|_, _| {});
+    let mut button2 = Button::new();
+    button2.set_text("I'm another button");
+
+    let mut button_layout = HorizontalLayout::new();
     button_layout.add(button1);
     button_layout.add(button2);
 

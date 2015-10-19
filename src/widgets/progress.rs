@@ -8,11 +8,13 @@ use rustbox::{
 use ::traits::{
     Drawable,
     EventReceiver,
-    Widget
+    Widget,
+    ActionSender
 };
+use ::widgets::Base;
 
 pub struct Progress<M> {
-    updater: Rc<Box<Fn(&mut Progress<M>, &M)>>,
+    base: Rc<Base<Progress<M>, M>>,
     value: i64,
     min: i64,
     max: i64,
@@ -20,14 +22,18 @@ pub struct Progress<M> {
 }
 
 impl <M> Progress<M> {
-    pub fn new<F: Fn(&mut Progress<M>, &M) + 'static>(updater: F) -> Progress<M> {
+    pub fn new() -> Progress<M> {
         Progress {
-            updater: Rc::new(Box::new(updater)),
+            base: Base::new(),
             value: 50,
             min: 0,
             max: 100,
             width: 10,
         }
+    }
+
+    pub fn set_update_handler<F: Fn(&mut Progress<M>, &M) + 'static>(&mut self, updater: F) {
+        self.base.set_update_handler(updater)
     }
 
     pub fn set_min(&mut self, min: i64) {
@@ -102,6 +108,16 @@ impl <M> EventReceiver<M> for Progress<M> {
 
 impl <M> Widget<M> for Progress<M> {
     fn update(&mut self, model: &M) {
-        self.updater.clone()(self, model)
+        self.base.clone().update(self, model);
+    }
+}
+
+impl <M> ActionSender<M> for Progress<M> {
+    type Action = ();
+    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+    fn do_action(&mut self, model: &mut M, action: Self::Action) {
+        self.base.do_action(model, action)
     }
 }

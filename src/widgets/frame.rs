@@ -8,13 +8,15 @@ use rustbox::{
 use ::traits::{
     Drawable,
     EventReceiver,
-    Widget
+    Widget,
+    ActionSender
 };
+use ::widgets::Base;
 
 pub struct Frame<M> {
+    base: Rc<Base<Frame<M>, M>>,
     child: Option<Box<Widget<M>>>,
     design: BoxDesign,
-    updater: Rc<Box<Fn(&mut Frame<M>, &M)>>
 }
 
 #[derive(Copy,Clone)]
@@ -46,12 +48,16 @@ pub static ROUNDED_DESIGN: BoxDesign = BoxDesign {
 };
 
 impl <M> Frame<M> {
-    pub fn new<F: Fn(&mut Frame<M>, &M) + 'static>(updater: F) -> Frame<M> {
+    pub fn new() -> Frame<M> {
         Frame {
+            base: Base::new(),
             child: None,
             design: RECTANGLE_DESIGN,
-            updater: Rc::new(Box::new(updater)),
         }
+    }
+
+    pub fn set_update_handler<F: Fn(&mut Frame<M>, &M) + 'static>(&mut self, updater: F) {
+        self.base.set_update_handler(updater)
     }
     
     pub fn set_design<D: Into<BoxDesign>>(&mut self, design: D) {
@@ -124,9 +130,19 @@ impl <M> EventReceiver<M> for Frame<M> {
 
 impl <M> Widget<M> for Frame<M> {
     fn update(&mut self, model: &M) {
-        self.updater.clone()(self, model);
+        self.base.clone().update(self, model);
         if let Some(ref mut child) = self.child {
             child.update(model);
         }
+    }
+}
+
+impl <M> ActionSender<M> for Frame<M> {
+    type Action = ();
+    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+    fn do_action(&mut self, model: &mut M, action: Self::Action) {
+        self.base.do_action(model, action)
     }
 }

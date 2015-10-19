@@ -1,3 +1,5 @@
+pub mod base;
+pub use self::base::Base;
 
 pub mod spinner;
 pub use self::spinner::*;
