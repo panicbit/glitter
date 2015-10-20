@@ -9,7 +9,7 @@ use ::traits::{
     Drawable,
     EventReceiver,
     Widget,
-    ActionSender
+    //ActionSender
 };
 use ::widgets::Base;
 
@@ -111,7 +111,7 @@ impl <M> Widget<M> for Progress<M> {
         self.base.clone().update(self, model);
     }
 }
-
+/*
 impl <M> ActionSender<M> for Progress<M> {
     type Action = ();
     fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
@@ -121,3 +121,4 @@ impl <M> ActionSender<M> for Progress<M> {
         self.base.do_action(model, action)
     }
 }
+*/

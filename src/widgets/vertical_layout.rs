@@ -8,7 +8,7 @@ use ::traits::{
     Drawable,
     EventReceiver,
     Widget,
-    ActionSender
+    //ActionSender
 };
 use ::widgets::Base;
 
@@ -91,7 +91,7 @@ impl <M> Widget<M> for VerticalLayout<M> {
         }
     }
 }
-
+/*
 impl <M> ActionSender<M> for VerticalLayout<M> {
     type Action = ();
     fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
@@ -101,3 +101,4 @@ impl <M> ActionSender<M> for VerticalLayout<M> {
         self.base.do_action(model, action)
     }
 }
+*/

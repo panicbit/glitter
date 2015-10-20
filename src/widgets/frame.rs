@@ -9,7 +9,7 @@ use ::traits::{
     Drawable,
     EventReceiver,
     Widget,
-    ActionSender
+    //ActionSender
 };
 use ::widgets::Base;
 
@@ -136,7 +136,7 @@ impl <M> Widget<M> for Frame<M> {
         }
     }
 }
-
+/*
 impl <M> ActionSender<M> for Frame<M> {
     type Action = ();
     fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
@@ -146,3 +146,4 @@ impl <M> ActionSender<M> for Frame<M> {
         self.base.do_action(model, action)
     }
 }
+*/

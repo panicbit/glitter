@@ -10,7 +10,7 @@ use ::traits::{
     Drawable,
     EventReceiver,
     Widget,
-    ActionSender
+    //ActionSender
 };
 use ::widgets::Base;
 
@@ -61,7 +61,7 @@ impl <M> Drawable<M> for Checkbox<M> {
 impl <M> EventReceiver<M> for Checkbox<M> {
     fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
         if let Event::KeyEvent(Some(Key::Char(' '))) = *event {
-            self.do_action(model, ());
+            //self.do_action(model, ());
             true
         } else {
             false
@@ -74,7 +74,7 @@ impl <M> Widget<M> for Checkbox<M> {
         self.base.clone().update(self, model);
     }
 }
-
+/*
 impl <M> ActionSender<M> for Checkbox<M> {
     type Action = ();
     fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
@@ -84,3 +84,4 @@ impl <M> ActionSender<M> for Checkbox<M> {
         self.base.do_action(model, action)
     }
 }
+*/

@@ -1,19 +1,19 @@
 use std::rc::Rc;
 use std::cell::RefCell;
-use ::traits::ActionSender;
+//use ::traits::ActionSender;
 
-pub struct Base<W: ActionSender<M>, M> {
+pub struct Base<W, M> {
     model: M,
     updater: RefCell<Option<Box<Fn(&mut W, &M)>>>,
-    action_handler: RefCell<Option<Box<Fn(&mut M, <W as ActionSender<M>>::Action)>>>
+    //action_handler: RefCell<Option<Box<Fn(&mut M, <W as ActionSender<M>>::Action)>>>
 }
 
-impl <W: ActionSender<M>, M> Base<W, M> {
+impl <W, M> Base<W, M> {
     pub fn new(model: M) -> Rc<Base<W, M>> {
         Rc::new(Base {
             model: model,
             updater: RefCell::new(None),
-            action_handler: RefCell::new(None)
+            //action_handler: RefCell::new(None)
         })
     }
     pub fn set_update_handler<H: Fn(&mut W, &M) + 'static>(&self, updater: H) {
@@ -24,6 +24,7 @@ impl <W: ActionSender<M>, M> Base<W, M> {
             updater(widget, model)
         }
     }
+    /*
     pub fn set_action_handler<H: Fn(&mut M, <W as ActionSender<M>>::Action) + 'static>(&self, handler: H) {
         *self.action_handler.borrow_mut() = Some(Box::new(handler))
     }
@@ -32,6 +33,7 @@ impl <W: ActionSender<M>, M> Base<W, M> {
             handler(model, action)
         }
     }
+    */
     pub fn get_model(&self) -> &M {
         &self.model
     }

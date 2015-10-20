@@ -5,7 +5,12 @@ use rustbox::{
     RB_NORMAL, 
     Event,
 };
-use ::traits::{Drawable, EventReceiver, Widget, ActionSender};
+use ::traits::{
+    Drawable,
+    EventReceiver,
+    Widget,
+    //ActionSender
+};
 use unicode_width::UnicodeWidthStr;
 use ::widgets::Base;
 
@@ -60,7 +65,7 @@ impl <M> Widget<M> for Label<M> {
         self.base.clone().update(self, model);
     }
 }
-
+/*
 impl <M> ActionSender<M> for Label<M> {
     type Action = ();
     fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
@@ -70,3 +75,4 @@ impl <M> ActionSender<M> for Label<M> {
         self.base.do_action(model, action)
     }
 }
+*/

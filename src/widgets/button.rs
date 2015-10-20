@@ -8,7 +8,12 @@ use rustbox::{
     Mouse
 };
 
-use ::traits::{Drawable, EventReceiver, Widget, ActionSender};
+use ::traits::{
+    Drawable,
+    EventReceiver,
+    Widget,
+    //ActionSender
+};
 use ::widgets::{Base, Label};
 
 pub struct Button<M> {
@@ -136,6 +141,7 @@ impl <M> Widget<M> for Button<M> {
     }
 }
 
+/*
 impl <M> ActionSender<M> for Button<M> {
     type Action = ();
     fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
@@ -145,3 +151,4 @@ impl <M> ActionSender<M> for Button<M> {
         self.base.do_action(model, action)
     }
 }
+*/
