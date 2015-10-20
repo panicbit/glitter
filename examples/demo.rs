@@ -2,7 +2,6 @@ extern crate glitter;
 use std::sync::{Arc,RwLock};
 use std::thread;
 use glitter::widgets::*;
-use glitter::traits::*;
 
 fn main() {
     // The application model
@@ -61,7 +60,7 @@ fn main() {
 
     let mut progress_layout = HorizontalLayout::new(());
 
-    let mut progress_bar: Progress<Model> = Progress::new(model.clone());
+    let mut progress_bar = Progress::new(model.clone());
     progress_bar.set_update_handler(|this, model| {
         let model = model.read().unwrap();
         this.set_min(0);
@@ -69,7 +68,7 @@ fn main() {
         this.set_value(model.progress);
     });
 
-    let mut progress_percent: Label<Model> = Label::new(model.clone());
+    let mut progress_percent = Label::new(model.clone());
     progress_percent.set_update_handler(|this, model| {
         let model = model.read().unwrap();
         this.set_text(format!("{:>3}%", model.progress));
