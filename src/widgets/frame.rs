@@ -15,7 +15,7 @@ use ::widgets::Base;
 
 pub struct Frame<M> {
     base: Rc<Base<Frame<M>, M>>,
-    child: Option<Box<Widget<M>>>,
+    child: Option<Box<Widget>>,
     design: BoxDesign,
 }
 
@@ -48,9 +48,9 @@ pub static ROUNDED_DESIGN: BoxDesign = BoxDesign {
 };
 
 impl <M> Frame<M> {
-    pub fn new() -> Frame<M> {
+    pub fn new(model: M) -> Frame<M> {
         Frame {
-            base: Base::new(),
+            base: Base::new(model),
             child: None,
             design: RECTANGLE_DESIGN,
         }
@@ -64,13 +64,13 @@ impl <M> Frame<M> {
         self.design = design.into()
     }
 
-    pub fn add<W: Widget<M> + 'static>(&mut self, child: W) {
+    pub fn add<W: Widget + 'static>(&mut self, child: W) {
         self.child = Some(Box::new(child))
     }
 }
 
-impl <M> Drawable<M> for Frame<M> {
-    fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, w: usize, h: usize) {
+impl <M> Drawable for Frame<M> {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, w: usize, h: usize) {
         let print = |x, y, ch| rb.print_char(x, y, RB_NORMAL, Color::Default, Color::Default, ch);
         let shadow = '░';
 
@@ -102,7 +102,7 @@ impl <M> Drawable<M> for Frame<M> {
             let w = w - border_size;
             let h = h - border_size;
 
-            child.draw_at(&rb, model, x + 1, y + 1, w, h);
+            child.draw_at(&rb, x + 1, y + 1, w, h);
         }
 
     }
@@ -118,21 +118,21 @@ impl <M> Drawable<M> for Frame<M> {
     }
 }
 
-impl <M> EventReceiver<M> for Frame<M> {
-    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
+impl <M> EventReceiver for Frame<M> {
+    fn handle_event(&mut self, event: &Event) -> bool {
         if let Some(ref mut child) = self.child {
-            child.handle_event(model, event)
+            child.handle_event(event)
         } else {
             false
         }
     }
 }
 
-impl <M> Widget<M> for Frame<M> {
-    fn update(&mut self, model: &M) {
-        self.base.clone().update(self, model);
+impl <M> Widget for Frame<M> {
+    fn update(&mut self) {
+        self.base.clone().update(self);
         if let Some(ref mut child) = self.child {
-            child.update(model);
+            child.update();
         }
     }
 }

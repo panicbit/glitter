@@ -22,9 +22,9 @@ pub struct Progress<M> {
 }
 
 impl <M> Progress<M> {
-    pub fn new() -> Progress<M> {
+    pub fn new(model: M) -> Progress<M> {
         Progress {
-            base: Base::new(),
+            base: Base::new(model),
             value: 50,
             min: 0,
             max: 100,
@@ -49,8 +49,8 @@ impl <M> Progress<M> {
     }
 }
 
-impl <M> Drawable<M> for Progress<M> {
-    fn draw_at(&self, rb: &RustBox, _model: &M, x_pos: usize, y_pos: usize, available_width: usize, available_height: usize) {
+impl <M> Drawable for Progress<M> {
+    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, available_width: usize, available_height: usize) {
         //rb.print(0, 0, RB_NORMAL, )
         fn get_sym(n: i64) -> char{
             match n {
@@ -100,15 +100,15 @@ impl <M> Drawable<M> for Progress<M> {
     }
 }
 
-impl <M> EventReceiver<M> for Progress<M> {
-    fn handle_event(&mut self, _model: &mut M, _event: &Event) -> bool {
+impl <M> EventReceiver for Progress<M> {
+    fn handle_event(&mut self, _event: &Event) -> bool {
         false
     }
 }
 
-impl <M> Widget<M> for Progress<M> {
-    fn update(&mut self, model: &M) {
-        self.base.clone().update(self, model);
+impl <M> Widget for Progress<M> {
+    fn update(&mut self) {
+        self.base.clone().update(self);
     }
 }
 /*

@@ -36,22 +36,22 @@ fn main() {
 
     // Main frame
 
-    let mut frame = Frame::new();
+    let mut frame = Frame::new(());
 
     // ### Main layout ###
 
-    let mut layout = VerticalLayout::new();
+    let mut layout = VerticalLayout::new(());
     layout.set_spacing(1);
 
     // ### Spinner ###
 
-    let mut spinner = Spinner::new();
+    let mut spinner = Spinner::new(());
     spinner.rainbow(true);
 
-    let mut spinner_label = Label::new();
+    let mut spinner_label = Label::new(());
     spinner_label.set_text("Spinning...");
 
-    let mut spinner_layout = HorizontalLayout::new();
+    let mut spinner_layout = HorizontalLayout::new(());
     spinner_layout.add(spinner);
     spinner_layout.add(spinner_label);
 
@@ -59,9 +59,9 @@ fn main() {
 
     // ### Progress bar ###
 
-    let mut progress_layout = HorizontalLayout::new();
+    let mut progress_layout = HorizontalLayout::new(());
 
-    let mut progress_bar: Progress<Model> = Progress::new();
+    let mut progress_bar: Progress<Model> = Progress::new(model.clone());
     progress_bar.set_update_handler(|this, model| {
         let model = model.read().unwrap();
         this.set_min(0);
@@ -69,7 +69,7 @@ fn main() {
         this.set_value(model.progress);
     });
 
-    let mut progress_percent: Label<Model> = Label::new();
+    let mut progress_percent: Label<Model> = Label::new(model.clone());
     progress_percent.set_update_handler(|this, model| {
         let model = model.read().unwrap();
         this.set_text(format!("{:>3}%", model.progress));
@@ -82,7 +82,7 @@ fn main() {
 
     // ### Checkbox ###
 
-    let mut checkbox: Checkbox<Model> = Checkbox::new();
+    let mut checkbox: Checkbox<Model> = Checkbox::new(model.clone());
     checkbox.set_update_handler(|this, model| {
         let model = model.read().unwrap();
         this.set_checked(!model.is_progressing);
@@ -95,10 +95,10 @@ fn main() {
     });
     */
 
-    let mut checkbox_label = Label::new();
+    let mut checkbox_label = Label::new(());
     checkbox_label.set_text("Paused");
 
-    let mut checkbox_layout = HorizontalLayout::new();
+    let mut checkbox_layout = HorizontalLayout::new(());
     checkbox_layout.add(checkbox);
     checkbox_layout.add(checkbox_label);
 
@@ -106,13 +106,13 @@ fn main() {
 
     // ### Buttons ###
 
-    let mut button1 = Button::new();
+    let mut button1 = Button::new(());
     button1.set_text("I'm a button ガ");
 
-    let mut button2 = Button::new();
+    let mut button2 = Button::new(());
     button2.set_text("I'm another button");
 
-    let mut button_layout = HorizontalLayout::new();
+    let mut button_layout = HorizontalLayout::new(());
     button_layout.add(button1);
     button_layout.add(button2);
 
@@ -120,5 +120,5 @@ fn main() {
 
     frame.add(layout);
 
-    glitter::run(model, frame);
+    glitter::run(frame);
 }

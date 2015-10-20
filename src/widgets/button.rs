@@ -18,7 +18,7 @@ use ::widgets::{Base, Label};
 
 pub struct Button<M> {
     base: Rc<Base<Button<M>, M>>,
-    pub label: Label<M>,
+    pub label: Label<()>,
     pub x: i32,
     pub y: i32,
     pub clicked: bool,
@@ -31,10 +31,10 @@ pub struct Button<M> {
 }
 
 impl <M> Button<M> {
-    pub fn new() -> Button<M> {
+    pub fn new(model: M) -> Button<M> {
         Button {
-            base: Base::new(),
-            label: Label::new(),
+            base: Base::new(model),
+            label: Label::new(()),
             x: 0,
             y: 0,
             clicked: false,
@@ -60,8 +60,8 @@ impl <M> Button<M> {
     }
 }
 
-impl <M> Drawable<M> for Button<M> {
-    fn draw_at(&self, rb: &RustBox, model: &M, x: usize, y: usize, width: usize, height: usize) {
+impl <M> Drawable for Button<M> {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
         if width == 0 || height == 0 { return }
         let height = height - 1; // Because drawing at `height + width` is off by one
 
@@ -83,7 +83,7 @@ impl <M> Drawable<M> for Button<M> {
             print(x+width+1, y, self.vertical);
         }
 
-        self.label.draw_at(rb, model, x + 1, y + 1, width, height);
+        self.label.draw_at(rb, x + 1, y + 1, width, height);
 
         print(x, y, self.top_left);
         print(x+width+1, y, self.top_right);
@@ -106,8 +106,8 @@ impl <M> Drawable<M> for Button<M> {
     }
 }
 
-impl <M> EventReceiver<M> for Button<M> {
-    fn handle_event(&mut self, _model: &mut M, event: &Event) -> bool {
+impl <M> EventReceiver for Button<M> {
+    fn handle_event(&mut self, event: &Event) -> bool {
         match *event {
             Event::MouseEvent(Mouse::Left, x, y) => {
                 let width = self.width() as i32;
@@ -135,9 +135,9 @@ impl <M> EventReceiver<M> for Button<M> {
     }
 }
 
-impl <M> Widget<M> for Button<M> {
-    fn update(&mut self, model: &M) {
-        self.base.clone().update(self, model);
+impl <M> Widget for Button<M> {
+    fn update(&mut self) {
+        self.base.clone().update(self);
     }
 }
 

@@ -21,9 +21,9 @@ pub struct Spinner<M> {
 }
 
 impl <M> Spinner<M> {
-    pub fn new() -> Spinner<M> {
+    pub fn new(model: M) -> Spinner<M> {
         Spinner {
-            base: Base::new(),
+            base: Base::new(model),
             frame: Cell::new(0),
             rainbow: false,
         }
@@ -70,8 +70,8 @@ impl <M> Spinner<M> {
     }
 }
 
-impl <M> Drawable<M> for Spinner<M> {
-    fn draw_at(&self, rb: &RustBox, _model: &M, x: usize, y: usize, available_width: usize, available_height: usize) {
+impl <M> Drawable for Spinner<M> {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, available_width: usize, available_height: usize) {
         let ch = self.get_anim_char();
         let color = self.get_anim_color();
         self.increment_frame();
@@ -87,15 +87,15 @@ impl <M> Drawable<M> for Spinner<M> {
     }
 }
 
-impl <M> EventReceiver<M> for Spinner<M> {
-    fn handle_event(&mut self, _model: &mut M, _event: &Event) -> bool {
+impl <M> EventReceiver for Spinner<M> {
+    fn handle_event(&mut self, _event: &Event) -> bool {
         false
     }
 }
 
-impl <M> Widget<M> for Spinner<M> {
-    fn update(&mut self, model: &M) {
-        self.base.clone().update(self, model);
+impl <M> Widget for Spinner<M> {
+    fn update(&mut self) {
+        self.base.clone().update(self);
     }
 }
 /*

@@ -15,7 +15,7 @@ pub mod traits;
 use traits::*;
 
 /// Start main loop
-pub fn run<M, W: Widget<M>>(mut model: M, mut widget: W) {
+pub fn run<W: Widget>(mut widget: W) {
     // Init rustbox
     let rb = RustBox::init(Default::default()).unwrap();
     rb.set_input_mode(InputMode::EscMouse);
@@ -23,8 +23,8 @@ pub fn run<M, W: Widget<M>>(mut model: M, mut widget: W) {
     loop {
         rb.clear();
 
-        widget.update(&model);
-        widget.draw_at(&rb, &model, 1, 1, 45, 20);
+        widget.update();
+        widget.draw_at(&rb, 1, 1, 45, 20);
 
         rb.present();
 
@@ -32,7 +32,7 @@ pub fn run<M, W: Widget<M>>(mut model: M, mut widget: W) {
         match rb.peek_event(Duration::milliseconds(100), false) {
             Ok(Event::KeyEvent(Some(Key::Esc))) => break,
             Ok(ref event) => {
-                widget.handle_event(&mut model, event);
+                widget.handle_event(event);
             }
             Err(e) => panic!("{}", e),
         }

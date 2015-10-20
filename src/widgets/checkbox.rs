@@ -20,9 +20,9 @@ pub struct Checkbox<M> {
 }
 
 impl <M> Checkbox<M> {
-    pub fn new() -> Checkbox<M> {
+    pub fn new(model: M) -> Checkbox<M> {
         Checkbox {
-            base: Base::new(),
+            base: Base::new(model),
             checked: false
         }
     }
@@ -40,8 +40,8 @@ impl <M> Checkbox<M> {
     }
 }
 
-impl <M> Drawable<M> for Checkbox<M> {
-    fn draw_at(&self, rb: &RustBox, _model: &M, x_pos: usize, y_pos: usize, available_width: usize, available_height: usize) {
+impl <M> Drawable for Checkbox<M> {
+    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, available_width: usize, available_height: usize) {
         let ch = match self.checked {
             true => '☒',
             false => '☐'
@@ -58,8 +58,8 @@ impl <M> Drawable<M> for Checkbox<M> {
     }
 }
 
-impl <M> EventReceiver<M> for Checkbox<M> {
-    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
+impl <M> EventReceiver for Checkbox<M> {
+    fn handle_event(&mut self, event: &Event) -> bool {
         if let Event::KeyEvent(Some(Key::Char(' '))) = *event {
             //self.do_action(model, ());
             true
@@ -69,9 +69,9 @@ impl <M> EventReceiver<M> for Checkbox<M> {
     }
 }
 
-impl <M> Widget<M> for Checkbox<M> {
-    fn update(&mut self, model: &M) {
-        self.base.clone().update(self, model);
+impl <M> Widget for Checkbox<M> {
+    fn update(&mut self) {
+        self.base.clone().update(self);
     }
 }
 /*

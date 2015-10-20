@@ -1,9 +1,9 @@
 use std::rc::Rc;
-use std::cell::RefCell;
+use std::cell::{RefCell, Ref, RefMut};
 //use ::traits::ActionSender;
 
 pub struct Base<W, M> {
-    model: M,
+    model: RefCell<M>,
     updater: RefCell<Option<Box<Fn(&mut W, &M)>>>,
     //action_handler: RefCell<Option<Box<Fn(&mut M, <W as ActionSender<M>>::Action)>>>
 }
@@ -11,7 +11,7 @@ pub struct Base<W, M> {
 impl <W, M> Base<W, M> {
     pub fn new(model: M) -> Rc<Base<W, M>> {
         Rc::new(Base {
-            model: model,
+            model: RefCell::new(model),
             updater: RefCell::new(None),
             //action_handler: RefCell::new(None)
         })
@@ -19,9 +19,9 @@ impl <W, M> Base<W, M> {
     pub fn set_update_handler<H: Fn(&mut W, &M) + 'static>(&self, updater: H) {
         *self.updater.borrow_mut() = Some(Box::new(updater))
     }
-    pub fn update(&self, widget: &mut W, model: &M) {
+    pub fn update(&self, widget: &mut W) {
         if let Some(ref updater) = *self.updater.borrow() {
-            updater(widget, model)
+            updater(widget, &mut *self.model.borrow_mut())
         }
     }
     /*
@@ -34,10 +34,10 @@ impl <W, M> Base<W, M> {
         }
     }
     */
-    pub fn get_model(&self) -> &M {
-        &self.model
+    pub fn get_model(&self) -> Ref<M> {
+        self.model.borrow()
     }
-    pub fn get_mut_model(&mut self) -> &mut M {
-        &mut self.model
+    pub fn get_mut_model(&mut self) -> RefMut<M> {
+        self.model.borrow_mut()
     }
 }

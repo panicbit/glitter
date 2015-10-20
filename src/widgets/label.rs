@@ -20,9 +20,9 @@ pub struct Label<M> {
 }
 
 impl <M> Label<M> {
-    pub fn new() -> Label<M> {
+    pub fn new(model: M) -> Label<M> {
         Label {
-            base: Base::new(),
+            base: Base::new(model),
             text: String::new(),
         }
     }
@@ -40,8 +40,8 @@ impl <M> Label<M> {
     }
 }
 
-impl <M> Drawable<M> for Label<M> {
-    fn draw_at(&self, rb: &RustBox, _model: &M, x: usize, y: usize, available_width: usize, available_height: usize) {
+impl <M> Drawable for Label<M> {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, available_width: usize, available_height: usize) {
         rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.text);
     }
 
@@ -54,15 +54,15 @@ impl <M> Drawable<M> for Label<M> {
     }
 }
 
-impl <M> EventReceiver<M> for Label<M> {
-    fn handle_event(&mut self, _model: &mut M, _event: &Event) -> bool {
+impl <M> EventReceiver for Label<M> {
+    fn handle_event(&mut self, _event: &Event) -> bool {
         false
     }
 }
 
-impl <M> Widget<M> for Label<M> {
-    fn update(&mut self, model: &M) {
-        self.base.clone().update(self, model);
+impl <M> Widget for Label<M> {
+    fn update(&mut self) {
+        self.base.clone().update(self);
     }
 }
 /*

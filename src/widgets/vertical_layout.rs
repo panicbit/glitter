@@ -14,14 +14,14 @@ use ::widgets::Base;
 
 pub struct VerticalLayout<M> {
     base: Rc<Base<VerticalLayout<M>, M>>,
-    children: Vec<Box<Widget<M>>>,
+    children: Vec<Box<Widget>>,
     spacing: usize,
 }
 
 impl <M> VerticalLayout<M> {
-    pub fn new() -> VerticalLayout<M> {
+    pub fn new(model: M) -> VerticalLayout<M> {
         VerticalLayout {
-            base: Base::new(),
+            base: Base::new(model),
             children: Vec::new(),
             spacing: 0,
         }
@@ -31,7 +31,7 @@ impl <M> VerticalLayout<M> {
         self.base.set_update_handler(updater)
     }
 
-    pub fn add<W: Widget<M> + 'static>(&mut self, widget: W) {
+    pub fn add<W: Widget + 'static>(&mut self, widget: W) {
         self.children.push(Box::new(widget))
     }
 
@@ -40,8 +40,8 @@ impl <M> VerticalLayout<M> {
     }
 }
 
-impl <M> Drawable<M> for VerticalLayout<M> {
-    fn draw_at(&self, rb: &RustBox, model: &M, x_pos: usize, y_pos: usize, width: usize, height: usize) {
+impl <M> Drawable for VerticalLayout<M> {
+    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, width: usize, height: usize) {
         let mut y_offset = 0;
         for child in self.children.iter() {
             let remaining_height = if y_offset < height {
@@ -52,7 +52,7 @@ impl <M> Drawable<M> for VerticalLayout<M> {
                 break
             };
             let slot_height = min(remaining_height, child.height());
-            child.draw_at(rb, model, x_pos, y_pos + y_offset, width, slot_height);
+            child.draw_at(rb, x_pos, y_pos + y_offset, width, slot_height);
             y_offset += child.height() + self.spacing;
         }
     }
@@ -72,22 +72,22 @@ impl <M> Drawable<M> for VerticalLayout<M> {
     }
 }
 
-impl <M> EventReceiver<M> for VerticalLayout<M> {
-    fn handle_event(&mut self, model: &mut M, event: &Event) -> bool {
+impl <M> EventReceiver for VerticalLayout<M> {
+    fn handle_event(&mut self, event: &Event) -> bool {
         // TODO: implement cursor
         for child in &mut self.children {
-            child.handle_event(model, event);
+            child.handle_event(event);
         }
 
         true
     }
 }
 
-impl <M> Widget<M> for VerticalLayout<M> {
-    fn update(&mut self, model: &M) {
-        self.base.clone().update(self, model);
+impl <M> Widget for VerticalLayout<M> {
+    fn update(&mut self) {
+        self.base.clone().update(self);
         for child in &mut self.children {
-            child.update(model)
+            child.update()
         }
     }
 }
