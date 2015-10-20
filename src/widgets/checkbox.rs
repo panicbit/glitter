@@ -14,8 +14,13 @@ use ::traits::{
 };
 use ::widgets::Base;
 
+pub enum Action {
+    Check,
+    Uncheck
+}
+
 pub struct Checkbox<M> {
-    base: Rc<Base<Checkbox<M>, M>>,
+    base: Rc<Base<Checkbox<M>, M, Action>>,
     checked: bool
 }
 
@@ -37,6 +42,14 @@ impl <M> Checkbox<M> {
 
     pub fn toggle(&mut self) {
         self.checked = !self.checked;
+    }
+
+    pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+
+    pub fn do_action(&mut self, action: Action) {
+        self.base.do_action(action)
     }
 }
 
@@ -61,7 +74,10 @@ impl <M> Drawable for Checkbox<M> {
 impl <M> EventReceiver for Checkbox<M> {
     fn handle_event(&mut self, event: &Event) -> bool {
         if let Event::KeyEvent(Some(Key::Char(' '))) = *event {
-            //self.do_action(model, ());
+            self.do_action(match self.checked {
+                true => Action::Check,
+                false => Action::Uncheck
+            });
             true
         } else {
             false
@@ -74,14 +90,3 @@ impl <M> Widget for Checkbox<M> {
         self.base.clone().update(self);
     }
 }
-/*
-impl <M> ActionSender<M> for Checkbox<M> {
-    type Action = ();
-    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
-        self.base.set_action_handler(handler)
-    }
-    fn do_action(&mut self, model: &mut M, action: Self::Action) {
-        self.base.do_action(model, action)
-    }
-}
-*/

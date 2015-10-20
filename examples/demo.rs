@@ -88,12 +88,10 @@ fn main() {
         this.set_checked(!model.is_progressing);
     });
 
-    /*
     checkbox.set_action_handler(|model, _| {
         let mut model = model.write().unwrap();
         model.is_progressing = !model.is_progressing
     });
-    */
 
     let mut checkbox_label = Label::new(());
     checkbox_label.set_text("Paused");

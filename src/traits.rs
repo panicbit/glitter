@@ -16,11 +16,3 @@ pub trait EventReceiver {
 pub trait Widget: Drawable + EventReceiver {
     fn update(&mut self);
 }
-
-/*
-pub trait ActionSender<M> {
-    type Action;
-    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H);
-    fn do_action(&mut self, model: &mut M, action: Self::Action);
-}
-*/

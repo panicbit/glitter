@@ -14,8 +14,10 @@ use ::traits::{
 use unicode_width::UnicodeWidthStr;
 use ::widgets::Base;
 
+pub type Action = ();
+
 pub struct Label<M> {
-    base: Rc<Base<Label<M>, M>>,
+    base: Rc<Base<Label<M>, M, Action>>,
     text: String,
 }
 
@@ -37,6 +39,14 @@ impl <M> Label<M> {
 
     pub fn text(&self) -> &str {
         &self.text
+    }
+    
+    pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+
+    pub fn do_action(&mut self, action: Action) {
+        self.base.do_action(action)
     }
 }
 
@@ -65,14 +75,3 @@ impl <M> Widget for Label<M> {
         self.base.clone().update(self);
     }
 }
-/*
-impl <M> ActionSender<M> for Label<M> {
-    type Action = ();
-    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
-        self.base.set_action_handler(handler)
-    }
-    fn do_action(&mut self, model: &mut M, action: Self::Action) {
-        self.base.do_action(model, action)
-    }
-}
-*/

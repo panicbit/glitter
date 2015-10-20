@@ -12,8 +12,10 @@ use ::traits::{
 };
 use ::widgets::Base;
 
+pub type Action = ();
+
 pub struct HorizontalLayout<M> {
-    base: Rc<Base<HorizontalLayout<M>, M>>,
+    base: Rc<Base<HorizontalLayout<M>, M, Action>>,
     children: Vec<Box<Widget>>,
     spacing: usize,
 }
@@ -37,6 +39,14 @@ impl <M> HorizontalLayout<M> {
 
     pub fn set_spacing(&mut self, spacing: usize) {
         self.spacing = spacing
+    }
+
+    pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+
+    pub fn do_action(&mut self, action: Action) {
+        self.base.do_action(action)
     }
 }
 
@@ -92,14 +102,3 @@ impl <M> Widget for HorizontalLayout<M> {
 
     }
 }
-/*
-impl <M> ActionSender<M> for HorizontalLayout<M> {
-    type Action = ();
-    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
-        self.base.set_action_handler(handler)
-    }
-    fn do_action(&mut self, model: &mut M, action: Self::Action) {
-        self.base.do_action(model, action)
-    }
-}
-*/

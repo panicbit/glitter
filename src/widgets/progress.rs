@@ -13,8 +13,10 @@ use ::traits::{
 };
 use ::widgets::Base;
 
+pub type Action = ();
+
 pub struct Progress<M> {
-    base: Rc<Base<Progress<M>, M>>,
+    base: Rc<Base<Progress<M>, M, Action>>,
     value: i64,
     min: i64,
     max: i64,
@@ -46,6 +48,14 @@ impl <M> Progress<M> {
 
     pub fn set_value(&mut self, value: i64) {
         self.value = value;
+    }
+
+    pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+
+    pub fn do_action(&mut self, action: Action) {
+        self.base.do_action(action)
     }
 }
 
@@ -111,14 +121,3 @@ impl <M> Widget for Progress<M> {
         self.base.clone().update(self);
     }
 }
-/*
-impl <M> ActionSender<M> for Progress<M> {
-    type Action = ();
-    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
-        self.base.set_action_handler(handler)
-    }
-    fn do_action(&mut self, model: &mut M, action: Self::Action) {
-        self.base.do_action(model, action)
-    }
-}
-*/

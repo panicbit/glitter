@@ -14,8 +14,10 @@ use ::traits::{
 };
 use ::widgets::Base;
 
+pub type Action = ();
+
 pub struct Spinner<M> {
-    base: Rc<Base<Spinner<M>, M>>,
+    base: Rc<Base<Spinner<M>, M, Action>>,
     frame: Cell<u32>,
     rainbow: bool
 }
@@ -68,6 +70,14 @@ impl <M> Spinner<M> {
     pub fn rainbow(&mut self, rainbow: bool) {
         self.rainbow = rainbow
     }
+
+    pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+
+    pub fn do_action(&mut self, action: Action) {
+        self.base.do_action(action)
+    }
 }
 
 impl <M> Drawable for Spinner<M> {
@@ -98,14 +108,3 @@ impl <M> Widget for Spinner<M> {
         self.base.clone().update(self);
     }
 }
-/*
-impl <M> ActionSender<M> for Spinner<M> {
-    type Action = ();
-    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
-        self.base.set_action_handler(handler)
-    }
-    fn do_action(&mut self, model: &mut M, action: Self::Action) {
-        self.base.do_action(model, action)
-    }
-}
-*/

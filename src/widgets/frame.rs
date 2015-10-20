@@ -13,8 +13,10 @@ use ::traits::{
 };
 use ::widgets::Base;
 
+pub type Action = ();
+
 pub struct Frame<M> {
-    base: Rc<Base<Frame<M>, M>>,
+    base: Rc<Base<Frame<M>, M, Action>>,
     child: Option<Box<Widget>>,
     design: BoxDesign,
 }
@@ -66,6 +68,14 @@ impl <M> Frame<M> {
 
     pub fn add<W: Widget + 'static>(&mut self, child: W) {
         self.child = Some(Box::new(child))
+    }
+
+    pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+
+    pub fn do_action(&mut self, model: &mut M, action: Action) {
+        self.base.do_action(action)
     }
 }
 
@@ -136,14 +146,3 @@ impl <M> Widget for Frame<M> {
         }
     }
 }
-/*
-impl <M> ActionSender<M> for Frame<M> {
-    type Action = ();
-    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
-        self.base.set_action_handler(handler)
-    }
-    fn do_action(&mut self, model: &mut M, action: Self::Action) {
-        self.base.do_action(model, action)
-    }
-}
-*/

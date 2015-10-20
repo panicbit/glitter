@@ -16,8 +16,10 @@ use ::traits::{
 };
 use ::widgets::{Base, Label};
 
+pub type Action = ();
+
 pub struct Button<M> {
-    base: Rc<Base<Button<M>, M>>,
+    base: Rc<Base<Button<M>, M, Action>>,
     pub label: Label<()>,
     pub x: i32,
     pub y: i32,
@@ -57,6 +59,14 @@ impl <M> Button<M> {
 
     pub fn toggle(&mut self) {
         self.clicked = !self.clicked;
+    }
+
+    pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
+        self.base.set_action_handler(handler)
+    }
+
+    pub fn do_action(&mut self, model: &mut M, action: Action) {
+        self.base.do_action(action)
     }
 }
 
@@ -140,15 +150,3 @@ impl <M> Widget for Button<M> {
         self.base.clone().update(self);
     }
 }
-
-/*
-impl <M> ActionSender<M> for Button<M> {
-    type Action = ();
-    fn set_action_handler<H: Fn(&mut M, Self::Action) + 'static>(&mut self, handler: H) {
-        self.base.set_action_handler(handler)
-    }
-    fn do_action(&mut self, model: &mut M, action: Self::Action) {
-        self.base.do_action(model, action)
-    }
-}
-*/
