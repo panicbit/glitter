@@ -24,3 +24,6 @@ pub use self::horizontal_layout::HorizontalLayout;
 
 pub mod label;
 pub use self::label::Label;
+
+pub mod input;
+pub use self::input::Input;

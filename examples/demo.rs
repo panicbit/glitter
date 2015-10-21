@@ -115,6 +115,11 @@ fn main() {
 
     layout.add(button_layout);
 
+    let mut input = Input::new(());
+    input.set_title("Input: ");
+
+    layout.add(input);
+
     frame.add(layout);
 
     glitter::run(frame);
