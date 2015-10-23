@@ -60,13 +60,13 @@ impl <M> Input<M> {
 
 impl <M> Drawable for Input<M> {
     fn draw_at(&self, rb: &RustBox, x: usize, y: usize, available_width: usize, available_height: usize) {
-        let title_width = UnicodeWidthStr::width(self.title());
+        let title_width = self.title().width();
         rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.title);
         rb.print(x + title_width, y, RB_REVERSE, Color::Default, Color::Default, &self.text);
     }
 
     fn width(&self) -> usize {
-        UnicodeWidthStr::width(self.text())
+        self.text().width()
     }
 
     fn height(&self) -> usize {

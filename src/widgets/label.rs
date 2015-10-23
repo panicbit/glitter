@@ -56,7 +56,7 @@ impl <M> Drawable for Label<M> {
     }
 
     fn width(&self) -> usize {
-        UnicodeWidthStr::width(self.text())
+        self.text().width()
     }
 
     fn height(&self) -> usize {
