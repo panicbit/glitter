@@ -8,3 +8,4 @@ authors = ["panicbit <panicbit.dev@gmail.com>"]
 rustbox = "*"
 time = "*"
 unicode-width = "*"
+unicode-segmentation = "*"

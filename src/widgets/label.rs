@@ -1,4 +1,5 @@
 use std::rc::Rc;
+use unicode_segmentation::UnicodeSegmentation;
 use rustbox::{
     RustBox, 
     Color, 
@@ -52,7 +53,18 @@ impl <M> Label<M> {
 
 impl <M> Drawable for Label<M> {
     fn draw_at(&self, rb: &RustBox, x: usize, y: usize, available_width: usize, available_height: usize) {
-        rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.text);
+        if available_width == 0 || available_height == 0 { return };
+        let mut x = x;
+        let mut remaining_width = available_width;
+        for grapheme in self.text.graphemes(true) {
+            let next_width = grapheme.width();
+            if next_width > remaining_width { break }
+            remaining_width -= next_width;
+
+            rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, grapheme);
+
+            x += next_width;
+        }
     }
 
     fn width(&self) -> usize {
