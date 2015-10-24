@@ -81,7 +81,7 @@ impl <M> Frame<M> {
 
 impl <M> Drawable for Frame<M> {
     fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
-        if width < 3 || height < 3 { return }
+        if w <= 3 || h <= 3 { return }
 
         let print = |x, y, ch| rb.print_char(x, y, RB_NORMAL, Color::Default, Color::Default, ch);
         let shadow = '░';
