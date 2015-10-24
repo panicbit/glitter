@@ -119,12 +119,12 @@ impl <M> Drawable for Frame<M> {
 
     fn width(&self) -> usize {
         // TODO: Have struct contain width
-        5
+        unimplemented!()
     }
 
     fn height(&self) -> usize {
         // TODO: Have struct contain width
-        5
+        unimplemented!()
     }
 }
 
