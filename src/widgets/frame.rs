@@ -81,27 +81,29 @@ impl <M> Frame<M> {
 
 impl <M> Drawable for Frame<M> {
     fn draw_at(&self, rb: &RustBox, x: usize, y: usize, w: usize, h: usize) {
+        if w < 3 || h < 3 { return }
+
         let print = |x, y, ch| rb.print_char(x, y, RB_NORMAL, Color::Default, Color::Default, ch);
         let shadow = '░';
 
-        for x in x..(x+w) {
+        for x in x..(x+w-1) {
             print(x, y, self.design.horizontal);
-            print(x, y+h, self.design.horizontal);
-            print(x+1, y+h+1, shadow);
+            print(x, y+h-2, self.design.horizontal);
+            print(x+1, y+h-1, shadow);
         }
 
-        for y in y..(y+h) {
+        for y in y..(y+h-1) {
             print(x, y, self.design.vertical);
-            print(x+w, y, self.design.vertical);
-            print(x+w+1, y+1, shadow);
+            print(x+w-2, y, self.design.vertical);
+            print(x+w-1, y+1, shadow);
         }
 
         print(x, y, self.design.top_left);
-        print(x+w, y, self.design.top_right);
-        print(x, y+h, self.design.bottom_left);
-        print(x+w, y+h, self.design.bottom_right);
+        print(x+w-2, y, self.design.top_right);
+        print(x, y+h-2, self.design.bottom_left);
+        print(x+w-2, y+h-2, self.design.bottom_right);
 
-        print(x+w+1, y+h+1, shadow);
+        print(x+w-1, y+h-1, shadow);
 
         // Render child
         if let Some(ref child) = self.child {
