@@ -1,9 +1,9 @@
 use std::rc::Rc;
 use rustbox::{
-    RustBox, 
-    Color, 
+    RustBox,
+    Color,
     RB_NORMAL,
-    RB_REVERSE, 
+    RB_REVERSE,
     Event,
     Key
 };
@@ -48,7 +48,7 @@ impl <M> Input<M> {
     pub fn set_title(&mut self, title: &str) {
         self.title = title.to_string();
     }
-    
+
     pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
         self.base.set_action_handler(handler)
     }
@@ -59,7 +59,7 @@ impl <M> Input<M> {
 }
 
 impl <M> Drawable for Input<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, available_width: usize, available_height: usize) {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
         let title_width = self.title().width();
         rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.title);
         rb.print(x + title_width, y, RB_REVERSE, Color::Default, Color::Default, &self.text);

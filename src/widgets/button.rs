@@ -1,8 +1,8 @@
 use std::rc::Rc;
 use rustbox::{
-    RustBox, 
-    Color, 
-    RB_NORMAL, 
+    RustBox,
+    Color,
+    RB_NORMAL,
     RB_REVERSE,
     Event,
     Mouse
@@ -65,7 +65,7 @@ impl <M> Button<M> {
         self.base.set_action_handler(handler)
     }
 
-    pub fn do_action(&mut self, model: &mut M, action: Action) {
+    pub fn do_action(&mut self, _model: &mut M, action: Action) {
         self.base.do_action(action)
     }
 }
@@ -83,35 +83,35 @@ impl <M> Drawable for Button<M> {
 
         let print = |x, y, ch| rb.print_char(x, y, clicked, Color::Default, Color::Default, ch);
 
-        for x in x..(x+width+1) {
+        for x in x..(x + width + 1) {
             print(x, y, self.horizontal);
-            print(x, y+height, self.horizontal);
+            print(x, y + height, self.horizontal);
         }
 
-        for y in y..(y+height) {
+        for y in y..(y + height) {
             print(x, y, self.vertical);
-            print(x+width+1, y, self.vertical);
+            print(x + width + 1, y, self.vertical);
         }
 
         self.label.draw_at(rb, x + 1, y + 1, width, height);
 
         print(x, y, self.top_left);
-        print(x+width+1, y, self.top_right);
-        print(x, y+height, self.bottom_left);
-        print(x+width+1, y+height, self.bottom_right);
+        print(x + width + 1, y, self.top_right);
+        print(x, y + height, self.bottom_left);
+        print(x + width + 1, y + height, self.bottom_right);
     }
 
     fn width(&self) -> usize {
         let label_width = self.label.width();
         let border_width = 2;
-        
+
         label_width + border_width
     }
 
     fn height(&self) -> usize {
         let label_height = self.label.height();
         let border_height = 2;
-        
+
         label_height + border_height
     }
 }
@@ -122,8 +122,8 @@ impl <M> EventReceiver for Button<M> {
             Event::MouseEvent(Mouse::Left, x, y) => {
                 let width = self.width() as i32;
                 let height = self.height() as i32;
-                if x >= self.x && y >= self.y 
-                    && x < self.x + width 
+                if x >= self.x && y >= self.y
+                    && x < self.x + width
                     && y < self.y + height
                 {
                     self.toggle();

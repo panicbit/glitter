@@ -81,7 +81,7 @@ impl <M> Spinner<M> {
 }
 
 impl <M> Drawable for Spinner<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, available_width: usize, available_height: usize) {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
         let ch = self.get_anim_char();
         let color = self.get_anim_color();
         self.increment_frame();

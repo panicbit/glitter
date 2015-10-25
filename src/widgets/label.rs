@@ -1,9 +1,9 @@
 use std::rc::Rc;
 use unicode_segmentation::UnicodeSegmentation;
 use rustbox::{
-    RustBox, 
-    Color, 
-    RB_NORMAL, 
+    RustBox,
+    Color,
+    RB_NORMAL,
     Event,
 };
 use ::traits::{
@@ -41,7 +41,7 @@ impl <M> Label<M> {
     pub fn text(&self) -> &str {
         &self.text
     }
-    
+
     pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
         self.base.set_action_handler(handler)
     }
@@ -52,10 +52,10 @@ impl <M> Label<M> {
 }
 
 impl <M> Drawable for Label<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, available_width: usize, available_height: usize) {
-        if available_width == 0 || available_height == 0 { return };
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+        if width == 0 || height == 0 { return };
         let mut x = x;
-        let mut remaining_width = available_width;
+        let mut remaining_width = width;
         for grapheme in self.text.graphemes(true) {
             let next_width = grapheme.width();
             if next_width > remaining_width { break }
