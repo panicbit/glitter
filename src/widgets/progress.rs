@@ -60,7 +60,7 @@ impl <M> Progress<M> {
 }
 
 impl <M> Drawable for Progress<M> {
-    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, available_width: usize, available_height: usize) {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
         //rb.print(0, 0, RB_NORMAL, )
         fn get_sym(n: i64) -> char{
             match n {
@@ -91,12 +91,13 @@ impl <M> Drawable for Progress<M> {
         let subchar = get_sym(remaining.round() as i64);
 
         for x_delta in 0 .. full {
-            rb.print_char(x_pos + x_delta, y_pos, RB_NORMAL, Color::Default, Color::Default, '█');
+            rb.print_char(x + x_delta, y, RB_NORMAL, Color::Default, Color::Default, '█');
         }
 
         let subchar_x_pos = full;
         if subchar_x_pos <= width as usize {
-             rb.print_char(x_pos + subchar_x_pos, y_pos, RB_NORMAL, Color::Default, Color::Default, subchar);
+             rb.print_char(x + subchar_x_pos, y, RB_NORMAL,
+                           Color::Default, Color::Default, subchar);
         }
     }
 

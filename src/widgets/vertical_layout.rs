@@ -45,13 +45,13 @@ impl <M> VerticalLayout<M> {
         self.base.set_action_handler(handler)
     }
 
-    pub fn do_action(&mut self, model: &mut M, action: Action) {
+    pub fn do_action(&mut self, _model: &mut M, action: Action) {
         self.base.do_action(action)
     }
 }
 
 impl <M> Drawable for VerticalLayout<M> {
-    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, width: usize, height: usize) {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
         let mut y_offset = 0;
         for child in self.children.iter() {
             let remaining_height = if y_offset < height {
@@ -62,7 +62,7 @@ impl <M> Drawable for VerticalLayout<M> {
                 break
             };
             let slot_height = min(remaining_height, child.height());
-            child.draw_at(rb, x_pos, y_pos + y_offset, width, slot_height);
+            child.draw_at(rb, x, y + y_offset, width, slot_height);
             y_offset += child.height() + self.spacing;
         }
     }

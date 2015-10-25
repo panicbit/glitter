@@ -54,12 +54,12 @@ impl <M> Checkbox<M> {
 }
 
 impl <M> Drawable for Checkbox<M> {
-    fn draw_at(&self, rb: &RustBox, x_pos: usize, y_pos: usize, available_width: usize, available_height: usize) {
+    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
         let ch = match self.checked {
             true => '☒',
             false => '☐'
         };
-        rb.print_char(x_pos, y_pos, RB_NORMAL, Color::Default, Color::Default, ch);
+        rb.print_char(x, y, RB_NORMAL, Color::Default, Color::Default, ch);
     }
 
     fn width(&self) -> usize {
