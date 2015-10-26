@@ -27,3 +27,4 @@ pub use self::label::Label;
 
 pub mod input;
 pub use self::input::Input;
+pub use self::input::Action;

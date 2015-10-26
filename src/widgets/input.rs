@@ -16,7 +16,10 @@ use ::traits::{
 use unicode_width::UnicodeWidthStr;
 use ::widgets::Base;
 
-pub type Action = ();
+pub enum Action {
+    Submitted(String),
+    TextChanged(String),
+}
 
 pub struct Input<M> {
     base: Rc<Base<Input<M>, M, Action>>,
@@ -37,16 +40,16 @@ impl <M> Input<M> {
         self.base.set_update_handler(updater)
     }
 
-    pub fn text(&self) -> &str {
-        &self.text
+    pub fn text(&self) -> String {
+        self.text.clone()
     }
 
-    pub fn title(&self) -> &str {
-        &self.title
+    pub fn title(&self) -> String {
+        self.title.clone()
     }
 
     pub fn set_title(&mut self, title: &str) {
-        self.title = title.to_string();
+        self.title = title.clone().to_string();
     }
 
     pub fn set_action_handler<H: Fn(&mut M, Action) + 'static>(&mut self, handler: H) {
@@ -77,17 +80,26 @@ impl <M> Drawable for Input<M> {
 impl <M> EventReceiver for Input<M> {
     fn handle_event(&mut self, _event: &Event) -> bool {
         match *_event {
+            Event::KeyEvent(Some(Key::Enter)) => {
+                let curr_text = self.text.clone();
+                self.do_action(Action::Submitted(curr_text));
+                true
+            },
             Event::KeyEvent(Some(Key::Backspace)) => {
                 self.text.pop();
+                let curr_text = self.text.clone();
+                self.do_action(Action::TextChanged(curr_text));
                 true
-            }
+            },
             Event::KeyEvent(Some(Key::Char(key))) => {
                 self.text = self.text.clone() + &key.to_string();
+                let curr_text = self.text.clone();
+                self.do_action(Action::TextChanged(curr_text));
                 true
-            }
+            },
             _ => {
                 false
-            }
+            },
         }
     }
 }
