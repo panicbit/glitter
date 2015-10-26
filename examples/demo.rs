@@ -7,13 +7,15 @@ fn main() {
     // The application model
     struct AppModel {
         progress: i64,
-        is_progressing: bool
+        is_progressing: bool,
+        title: String,
     }
     type Model = Arc<RwLock<AppModel>>;
 
     let model = Arc::new(RwLock::new(AppModel {
         progress: 0,
-        is_progressing: true
+        is_progressing: true,
+        title: "".to_string(),
     }));
 
     // Spawn background thread
@@ -106,8 +108,13 @@ fn main() {
     let mut button1 = Button::new(());
     button1.set_text("I'm a button ガ");
 
-    let mut button2 = Button::new(());
+    let mut button2 = Button::new(model.clone());
     button2.set_text("I'm another button");
+
+    button2.set_update_handler(|this, model| {
+        let model = model.read().unwrap();
+        this.set_text(model.title.as_ref());
+    });
 
     let mut button_layout = HorizontalLayout::new(());
     button_layout.add(button1);
@@ -115,8 +122,20 @@ fn main() {
 
     layout.add(button_layout);
 
-    let mut input = Input::new(());
+    // ### Inputs ###
+
+    let mut input = Input::new(model.clone());
     input.set_title("Input: ");
+
+    input.set_action_handler(|model, action| {
+        let mut model = model.write().unwrap();
+        match action {
+            Action::Submitted(text) => {
+                model.title = text;
+            },
+            _ => (),
+        }
+    });
 
     layout.add(input);
 
