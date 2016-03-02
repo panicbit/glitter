@@ -52,7 +52,7 @@ impl <M> Label<M> {
 }
 
 impl <M> Drawable for Label<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+    fn draw_at(&mut self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
         if width == 0 || height == 0 { return };
         let mut x = x;
         let mut remaining_width = width;

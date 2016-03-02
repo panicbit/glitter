@@ -51,9 +51,9 @@ impl <M> VerticalLayout<M> {
 }
 
 impl <M> Drawable for VerticalLayout<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+    fn draw_at(&mut self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
         let mut y_offset = 0;
-        for child in self.children.iter() {
+        for child in self.children.iter_mut() {
             let remaining_height = if y_offset < height {
                 height - y_offset
             } else {

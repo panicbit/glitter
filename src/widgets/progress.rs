@@ -60,7 +60,7 @@ impl <M> Progress<M> {
 }
 
 impl <M> Drawable for Progress<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
+    fn draw_at(&mut self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
         //rb.print(0, 0, RB_NORMAL, )
         fn get_sym(n: i64) -> char{
             match n {

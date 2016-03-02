@@ -62,7 +62,7 @@ impl <M> Input<M> {
 }
 
 impl <M> Drawable for Input<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
+    fn draw_at(&mut self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
         let title_width = self.title().width();
         rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.title);
         rb.print(x + title_width, y, RB_REVERSE, Color::Default, Color::Default, &self.text);
