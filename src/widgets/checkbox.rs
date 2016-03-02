@@ -73,7 +73,7 @@ impl <M> Drawable for Checkbox<M> {
 
 impl <M> EventReceiver for Checkbox<M> {
     fn handle_event(&mut self, event: &Event) -> bool {
-        if let Event::KeyEvent(Some(Key::Char(' '))) = *event {
+        if let Event::KeyEvent(Key::Char(' ')) = *event {
             self.do_action(match self.checked {
                 true => Action::Check,
                 false => Action::Uncheck

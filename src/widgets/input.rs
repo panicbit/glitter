@@ -80,18 +80,18 @@ impl <M> Drawable for Input<M> {
 impl <M> EventReceiver for Input<M> {
     fn handle_event(&mut self, _event: &Event) -> bool {
         match *_event {
-            Event::KeyEvent(Some(Key::Enter)) => {
+            Event::KeyEvent(Key::Enter) => {
                 let curr_text = self.text.clone();
                 self.do_action(Action::Submitted(curr_text));
                 true
             },
-            Event::KeyEvent(Some(Key::Backspace)) => {
+            Event::KeyEvent(Key::Backspace) => {
                 self.text.pop();
                 let curr_text = self.text.clone();
                 self.do_action(Action::TextChanged(curr_text));
                 true
             },
-            Event::KeyEvent(Some(Key::Char(key))) => {
+            Event::KeyEvent(Key::Char(key)) => {
                 self.text = self.text.clone() + &key.to_string();
                 let curr_text = self.text.clone();
                 self.do_action(Action::TextChanged(curr_text));
