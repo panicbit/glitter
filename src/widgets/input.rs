@@ -62,7 +62,7 @@ impl <M> Input<M> {
 }
 
 impl <M> Drawable for Input<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
+    fn draw_at(&mut self, rb: &RustBox, x: usize, y: usize, _width: usize, _height: usize) {
         let title_width = self.title().width();
         rb.print(x, y, RB_NORMAL, Color::Default, Color::Default, &self.title);
         rb.print(x + title_width, y, RB_REVERSE, Color::Default, Color::Default, &self.text);
@@ -80,18 +80,18 @@ impl <M> Drawable for Input<M> {
 impl <M> EventReceiver for Input<M> {
     fn handle_event(&mut self, _event: &Event) -> bool {
         match *_event {
-            Event::KeyEvent(Some(Key::Enter)) => {
+            Event::KeyEvent(Key::Enter) => {
                 let curr_text = self.text.clone();
                 self.do_action(Action::Submitted(curr_text));
                 true
             },
-            Event::KeyEvent(Some(Key::Backspace)) => {
+            Event::KeyEvent(Key::Backspace) => {
                 self.text.pop();
                 let curr_text = self.text.clone();
                 self.do_action(Action::TextChanged(curr_text));
                 true
             },
-            Event::KeyEvent(Some(Key::Char(key))) => {
+            Event::KeyEvent(Key::Char(key)) => {
                 self.text = self.text.clone() + &key.to_string();
                 let curr_text = self.text.clone();
                 self.do_action(Action::TextChanged(curr_text));

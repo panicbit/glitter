@@ -16,7 +16,9 @@ use ::traits::{
 };
 use ::widgets::{Base, Label};
 
-pub type Action = ();
+pub enum Action {
+    Clicked,
+}
 
 pub struct Button<M> {
     base: Rc<Base<Button<M>, M, Action>>,
@@ -71,10 +73,11 @@ impl <M> Button<M> {
 }
 
 impl <M> Drawable for Button<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+    fn draw_at(&mut self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
         if width == 0 || height == 0 { return }
         let height = height - 1; // Because drawing at `height + width` is off by one
-
+        self.x = x as i32;
+        self.y = y as i32;
         let width = self.label.width();
         let clicked = match self.clicked {
             true => RB_REVERSE,
@@ -122,11 +125,16 @@ impl <M> EventReceiver for Button<M> {
             Event::MouseEvent(Mouse::Left, x, y) => {
                 let width = self.width() as i32;
                 let height = self.height() as i32;
-                if x >= self.x && y >= self.y
-                    && x < self.x + width
-                    && y < self.y + height
+                let pos_x = self.x;
+                let pos_y = self.y;
+
+                if x >= pos_x && y >= pos_y
+                    && x < pos_x + width
+                    && y < pos_y + height
                 {
-                    self.toggle();
+                    if !self.clicked {
+                        self.toggle();
+                    }
                     true
                 } else {
                     true

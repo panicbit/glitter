@@ -3,7 +3,7 @@ extern crate rustbox;
 extern crate time;
 extern crate unicode_width;
 extern crate unicode_segmentation;
-use time::Duration;
+use std::time::Duration;
 use rustbox::{
     RustBox,
     InputMode,
@@ -30,8 +30,8 @@ pub fn run<W: Widget>(mut widget: W) {
         rb.present();
 
         //match rb.poll_event(false) {
-        match rb.peek_event(Duration::milliseconds(100), false) {
-            Ok(Event::KeyEvent(Some(Key::Esc))) => break,
+        match rb.peek_event(Duration::from_millis(100), false) {
+            Ok(Event::KeyEvent(Key::Esc)) => break,
             Ok(ref event) => {
                 widget.handle_event(event);
             }

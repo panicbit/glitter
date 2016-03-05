@@ -51,9 +51,9 @@ impl <M> HorizontalLayout<M> {
 }
 
 impl <M> Drawable for HorizontalLayout<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+    fn draw_at(&mut self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
         let mut x_offset = 0;
-        for child in self.children.iter() {
+        for child in self.children.iter_mut() {
             let remaining_width = if x_offset < width {
                 width - x_offset
             } else {

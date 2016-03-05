@@ -80,7 +80,7 @@ impl <M> Frame<M> {
 }
 
 impl <M> Drawable for Frame<M> {
-    fn draw_at(&self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
+    fn draw_at(&mut self, rb: &RustBox, x: usize, y: usize, width: usize, height: usize) {
         if width <= 3 || height <= 3 { return }
 
         let print = |x, y, ch| rb.print_char(x, y, RB_NORMAL, Color::Default, Color::Default, ch);
@@ -106,7 +106,7 @@ impl <M> Drawable for Frame<M> {
         print(x + width - 1, y + height - 1, shadow);
 
         // Render child
-        if let Some(ref child) = self.child {
+        if let Some(ref mut child) = self.child {
             // Don't render child if too frame small
             let border_size = 3;
             if width < border_size || height < border_size { return }
