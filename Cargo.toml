@@ -5,7 +5,6 @@ authors = ["panicbit <panicbit.dev@gmail.com>"]
 
 
 [dependencies]
-rustbox = "0.7"
-time = "0.1"
+rustbox = "0.8.1"
 unicode-width = "0.1"
 unicode-segmentation = "0.1"

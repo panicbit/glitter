@@ -1,6 +1,5 @@
 #![feature(iter_arith)]
 extern crate rustbox;
-extern crate time;
 extern crate unicode_width;
 extern crate unicode_segmentation;
 use std::time::Duration;

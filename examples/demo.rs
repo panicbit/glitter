@@ -1,6 +1,7 @@
 extern crate glitter;
 use std::sync::{Arc,RwLock};
 use std::thread;
+use std::time::Duration;
 use glitter::widgets::*;
 
 fn main() {
@@ -23,7 +24,7 @@ fn main() {
         let model = model.clone();
         thread::spawn(move || {
             loop {
-                thread::sleep_ms(100);
+                thread::sleep(Duration::from_millis(100));
                 let mut model = model.write().unwrap();
                 if model.is_progressing {
                     model.progress += 1;
