@@ -34,7 +34,7 @@
 //! Here's a simple example of an input widget using it's action handler to
 //! modify the model based on an Action
 //!
-//! ```
+//! ```no_run
 //! use std::sync::{Arc, RwLock};
 //! use glitter::widgets::{Action, Frame, Input, VerticalLayout};
 //!
@@ -110,7 +110,7 @@ use traits::*;
 ///
 /// # Examples
 ///
-/// ```
+/// ```no_run
 /// use glitter::widgets::{Frame, Spinner, VerticalLayout};
 ///
 /// let mut frame = Frame::new(());
